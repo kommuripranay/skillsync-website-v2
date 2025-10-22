@@ -1,0 +1,338 @@
+/* src/pages/SignUp.css */
+
+.signup-page-container {
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--background-color);
+}
+
+/* Left Half */
+.signup-left-half {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  background-image: url('https://via.placeholder.com/800x1200/C70039/ffffff?text=SkillSync+SignUp');
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  padding: 2rem;
+}
+
+.signup-left-half::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+}
+
+.left-content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  max-width: 400px;
+}
+
+.left-heading {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+  font-weight: 700;
+}
+
+/* Dropdown styles */
+.dropdown-container {
+  margin-top: 1.5rem;
+}
+
+.dropdown-toggle {
+  background-color: rgba(255, 255, 255, 0.2);
+  color: #ffffff;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  padding: 0.75rem 1.5rem; /* Reverted */
+  border-radius: 25px;
+  cursor: pointer;
+  font-size: 1rem; /* Reverted */
+  font-weight: 600;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.dropdown-toggle:hover {
+  background-color: rgba(255, 255, 255, 0.3);
+  border-color: #ffffff;
+}
+
+.dropdown-list {
+  list-style: none;
+  margin-top: 1rem;
+  padding: 1rem; /* Reverted */
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  text-align: left;
+  max-width: 300px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.dropdown-list li {
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem; /* Reverted */
+  line-height: 1.4;
+}
+
+.dropdown-list li:last-child {
+  margin-bottom: 0;
+}
+
+
+/* Right Half */
+.signup-right-half {
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: var(--navbar-bg);
+  padding: 2rem;
+  position: relative;
+  overflow-y: auto;
+  padding-top: 5rem;
+}
+
+/* Sign In prompt */
+.signin-prompt.top-right {
+  position: absolute;
+  top: 1.5rem;
+  right: 2rem;
+  font-size: 0.875rem; /* Reverted */
+  margin-top: 0;
+}
+
+.signin-prompt.top-right p {
+  margin: 0;
+}
+
+.signin-prompt.top-right a {
+  color: var(--accent-color);
+  font-weight: 600; /* Reverted */
+  text-decoration: none;
+}
+.signin-prompt.top-right a:hover {
+  text-decoration: underline;
+}
+
+
+.right-content-wrapper {
+  width: 100%;
+  max-width: 500px; /* <<<< Kept the wider wrapper >>>> */
+  text-align: left;
+  margin-top: 0;
+}
+
+.right-heading {
+  font-size: 1.8rem; /* Reverted */
+  font-weight: 600;
+  color: var(--text-color);
+  margin-bottom: 1.5rem; /* Reverted */
+  text-align: left;
+}
+
+/* Social Logins */
+.social-logins {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Reverted */
+  margin-bottom: 1rem; /* Reverted */
+}
+
+.social-button {
+  background-color: #fff;
+  color: #333;
+  border: 1px solid #ccc;
+  padding: 0.75rem 1rem; /* Reverted */
+  border-radius: 5px;
+  font-size: 0.9rem; /* Reverted */
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem; /* Reverted */
+}
+
+/* Keep original icon size */
+.social-button svg {
+  width: 20px; /* Reverted */
+  height: 20px;
+}
+
+.social-button:hover {
+  background-color: #f7f7f7;
+}
+
+.social-button.linkedin {
+  color: #0A66C2;
+}
+
+.separator {
+  display: flex;
+  align-items: center;
+  gap: 1rem; /* Reverted */
+  color: var(--text-light);
+  margin: 1.5rem 0; /* Reverted */
+}
+.separator-line {
+  flex-grow: 1;
+  height: 1px;
+  background-color: #e0e0e0;
+}
+/* Revert OR text size if needed, depends on preference */
+.separator-text {
+   /* font-size: 0.8rem; Let's keep this slightly smaller */
+   font-size: 0.875rem; /* Or revert */
+}
+
+/* Form styles */
+.signup-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem; /* Reverted */
+}
+
+.input-group {
+  text-align: left;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.875rem; /* Reverted */
+  font-weight: 500;
+  margin-bottom: 0.5rem; /* Reverted */
+}
+
+.input-group input {
+  width: 100%;
+  padding: 0.75rem; /* Reverted */
+  font-size: 1rem; /* Reverted */
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-sizing: border-box;
+  background-color: #ffffff;
+}
+
+.create-account-button {
+  background-color: var(--accent-color);
+  color: #ffffff;
+  border: none;
+  padding: 0.75rem 1rem; /* Reverted */
+  border-radius: 5px;
+  font-size: 1rem; /* Reverted */
+  font-weight: bold;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+  margin-top: 1.5rem; /* Reverted */
+}
+
+.create-account-button:hover {
+  background-color: var(--accent-hover);
+}
+
+
+/* --- Responsive Adjustments --- */
+@media (max-width: 900px) {
+  .signup-left-half {
+    flex: 0.8;
+  }
+  .signup-right-half {
+    flex: 1.2;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .signup-page-container {
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  .signup-left-half {
+    min-height: 200px;
+    height: auto;
+    padding: 1.5rem 1rem;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+  }
+
+  .signup-left-half::before {
+     background: rgba(0, 0, 0, 0.4);
+  }
+
+  .left-content {
+    margin-bottom: 0;
+  }
+
+  /* Keep mobile font sizes slightly smaller for left side */
+  .left-heading {
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
+  }
+  .dropdown-toggle {
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+  }
+  .dropdown-list {
+    font-size: 0.9rem;
+    padding: 0.75rem;
+  }
+
+  .signup-right-half {
+    padding: 1.5rem; /* Adjusted mobile padding */
+    flex: 1;
+    justify-content: flex-start;
+    overflow-y: auto;
+    padding-top: 1.5rem;
+  }
+
+  .signin-prompt.top-right {
+    position: static;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem; /* Adjusted mobile font size */
+  }
+
+  .right-content-wrapper {
+    max-width: 100%;
+    margin-top: 0;
+  }
+
+  /* Keep mobile font sizes slightly smaller for right side */
+  .right-heading {
+    font-size: 1.5rem;
+    margin-bottom: 1.2rem;
+  }
+  .social-logins, .signup-form {
+    gap: 0.75rem;
+  }
+  .social-button, .create-account-button, .input-group input {
+    padding: 0.7rem 1rem;
+    font-size: 0.9rem;
+  }
+  .input-group label {
+    font-size: 0.85rem;
+  }
+  .create-account-button {
+    margin-top: 1rem;
+  }
+  .social-button svg {
+    width: 18px; /* Adjusted mobile icon size */
+    height: 18px;
+  }
+}

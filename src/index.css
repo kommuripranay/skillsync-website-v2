@@ -1,0 +1,33 @@
+/* Import both fonts */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Smooch+Sans:wght@700&display=swap');
+
+/* Define your color palette */
+:root {
+  --background-color: #f4f4f4;
+  --text-color: #121212;
+  --text-light: #6b7280;
+  --navbar-bg: #ffffff;
+  --accent-color: #C70039;
+  --accent-hover: #E01E5A;
+}
+
+/* Basic reset - Default font is Inter */
+body, h1, p, ul, li, button, input, label {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Inter', sans-serif;
+}
+
+body {
+  background-color: var(--background-color);
+  color: var(--text-color);
+}
+
+/* Simple styling for the page content */
+.page-content {
+  padding: 2rem;
+  text-align: center;
+}
+
+/* ... (rest of index.css) ... */

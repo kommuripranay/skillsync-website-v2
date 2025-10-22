@@ -1,0 +1,117 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--navbar-bg);
+  padding: 1rem 2rem;
+  /* Replaced the border with a subtle shadow for the light theme */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* src/components/Navbar/Navbar.css */
+
+/* ... (other navbar styles) ... */
+
+.navbar-logo {
+  font-family: 'Smooch Sans', sans-serif; /* <<< Add this line >>> */
+  font-size: 1.8rem; /* You might need to adjust size for the new font */
+  font-weight: 700; /* Smooch Sans often looks better bold */
+  color: var(--text-color);
+  text-decoration: none;
+  /* Add some letter spacing if needed for readability */
+  /* letter-spacing: 1px; */
+}
+
+/* ... (rest of Navbar.css) ... */
+/* src/components/Navbar/Navbar.css */
+
+.navbar-links {
+  display: flex;
+  list-style: none;
+  gap: 1.5rem;
+}
+
+.navbar-links a {
+  /* This is the new default "lighter" state */
+  color: var(--text-light);
+  text-decoration: none;
+  font-size: 1rem;
+  position: relative;
+  padding-bottom: 5px;
+  transition: color 0.3s ease; /* Add transition for the color change */
+}
+
+/* This is the "darker" active state */
+.navbar-links a.active {
+  color: var(--text-color);
+  font-weight: 600; /* Make it a bit bolder to stand out */
+}
+
+/* This creates the underline */
+.navbar-links a::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--accent-color);
+  transition: width 0.3s ease;
+}
+
+/* This triggers the underline animation on hover */
+.navbar-links a:hover::after {
+  width: 100%;
+}
+
+/* Also make the text darker on hover, not just underline */
+.navbar-links a:hover {
+  color: var(--text-color);
+}
+
+/* ... (previous styles for .navbar, .navbar-logo, .navbar-links) ... */
+
+/* Remove the old .navbar-signin style */
+
+/* Styles for the auth button container */
+.navbar-auth-buttons {
+  display: flex;
+  gap: 1rem; /* Space between buttons */
+}
+
+/* Base styles for both buttons */
+.navbar-button {
+  padding: 0.5rem 1rem;
+  border-radius: 5px;
+  font-size: 0.9rem; /* Slightly smaller */
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+  border: 1px solid transparent; /* Base border */
+  text-align: center;
+}
+
+/* Specific styles for Sign In button (border, light text) */
+.signin-button {
+  color: var(--text-light);
+  border-color: #d1d5db; /* Light gray border */
+  background-color: transparent;
+}
+
+.signin-button:hover {
+  background-color: #f9fafb; /* Very light gray background on hover */
+  color: var(--text-color);
+}
+
+/* Specific styles for Sign Up button (accent color) */
+.signup-button {
+  background-color: var(--accent-color);
+  color: #ffffff;
+  border-color: var(--accent-color);
+}
+
+.signup-button:hover {
+  background-color: var(--accent-hover);
+  border-color: var(--accent-hover);
+}
