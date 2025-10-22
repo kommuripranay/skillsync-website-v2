@@ -18,6 +18,20 @@
   font-weight: 700; /* Smooch Sans often looks better bold */
   color: var(--text-color);
   text-decoration: none;
+
+
+    
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  /* Add some letter spacing if needed for readability */
+  /* letter-spacing: 1px; */
+}
+
+.navbar-logo img {
+  height: 28px;
+  justify-self: center;
+  padding-right: 8px;
   /* Add some letter spacing if needed for readability */
   /* letter-spacing: 1px; */
 }

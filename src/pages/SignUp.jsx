@@ -1,8 +1,10 @@
 /* src/pages/SignUp.jsx */
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './SignUp.css';
+import { IonIcon } from '@ionic/react'; // <<< Import IonIcon component >>>
+import { chevronDownOutline, chevronUpOutline, arrowForwardOutline } from 'ionicons/icons'; // <<< Import specific icons >>>
 
 // --- Icon Components (no changes) ---
 const GoogleIcon = () => (
@@ -39,20 +41,19 @@ function SignUp() {
     <div className="signup-page-container">
       {/* Left Half */}
       <div className="signup-left-half">
-        {/* ... content ... */}
         <div className="left-content">
           <h1 className="left-heading">Create your free account</h1>
           <div className="dropdown-container">
             <button className="dropdown-toggle" onClick={() => setShowIncluded(!showIncluded)}>
-              See what's included {showIncluded ? '▲' : '▼'}
+              See what's included
+              <IonIcon icon={showIncluded ? chevronUpOutline : chevronDownOutline} className="dropdown-arrow-icon" />
             </button>
-            {showIncluded && (
-              <ul className="dropdown-list">
-                {includedItems.map((item, index) => (
-                  <li key={index}>{item}</li>
-                ))}
-              </ul>
-            )}
+            {/* Add conditional class 'show' for animation */}
+            <ul className={`dropdown-list ${showIncluded ? 'show' : ''}`}>
+              {includedItems.map((item, index) => (
+                <li key={index}>{item}</li>
+              ))}
+            </ul>
           </div>
         </div>
       </div>
@@ -60,7 +61,8 @@ function SignUp() {
       {/* Right Half */}
       <div className="signup-right-half">
         <div className="signin-prompt top-right">
-          <p>Already have an account? <Link to="/signin">Sign In &rarr;</Link></p>
+          {/* <<< Use IonIcon component with icon prop >>> */}
+          <p>Already have an account? <Link to="/signin">Sign In <IonIcon icon={arrowForwardOutline} className="signin-arrow-icon" /></Link></p>
         </div>
 
         <div className="right-content-wrapper">
@@ -106,7 +108,9 @@ function SignUp() {
             </div>
 
             <button type="submit" className="create-account-button">
-              Create account &gt;
+              Create account
+              {/* <<< Use IonIcon component with icon prop >>> */}
+              <IonIcon icon={arrowForwardOutline} className="button-arrow-icon"/>
             </button>
           </form>
         </div>
