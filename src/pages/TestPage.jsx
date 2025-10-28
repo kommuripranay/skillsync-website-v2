@@ -6,7 +6,7 @@ import { IonIcon } from '@ionic/react';
 import { timeOutline, checkmarkCircle, warning } from 'ionicons/icons';
 import { questionBank } from '../data/questionBank';
 
-const TOTAL_TEST_TIME = 6 * 60; // 30 minutes in seconds
+const TOTAL_TEST_TIME = 30 * 60; // 30 minutes in seconds
 const WARNING_TIME = 5 * 60;
 
 // 1. --- ADD { onResume } ---
