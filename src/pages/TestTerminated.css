@@ -1,0 +1,69 @@
+.terminated-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: var(--background-color);
+  padding: 2rem;
+  text-align: center;
+}
+
+.terminated-box {
+  background-color: var(--navbar-bg);
+  max-width: 500px;
+  width: 100%;
+  padding: 3rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.terminated-icon {
+  font-size: 3rem;
+  color: var(--accent-color);
+  margin-bottom: 1rem;
+}
+
+.terminated-title {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 0.5rem;
+}
+
+.terminated-text {
+  font-size: 1.1rem;
+  color: var(--text-light);
+  margin-bottom: 2rem;
+}
+
+.terminated-link-button {
+  display: inline-block;
+  background-color: var(--accent-color);
+  color: #ffffff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  transition: background-color 0.3s ease;
+}
+
+.terminated-link-button:hover {
+  background-color: var(--accent-hover);
+}
+
+.terminated-redirect-text {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  margin-top: 1.5rem;
+}
+
+/* We can reuse the theme toggle wrapper style */
+.theme-toggle-wrapper {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 10;
+}

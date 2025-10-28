@@ -4,7 +4,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import TestInstructions from './pages/TestInstructions';
-import TestPage from './pages/TestPage'; // Using your file name
+import TestPage from './pages/TestPage';
+import TestTerminated from './pages/TestTerminated';
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/test/instructions/:skillName" element={<TestInstructions />} />
       <Route path="/test/start/:skillName" element={<TestPage />} />
+      <Route path="/test/terminated" element={<TestTerminated />} />
       <Route path="*" element={<Navigate to="/dashboard" replace />} />
     </Routes>
   );

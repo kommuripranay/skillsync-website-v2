@@ -6,7 +6,8 @@ import { IonIcon } from '@ionic/react';
 import { timeOutline, checkmarkCircle, warning } from 'ionicons/icons';
 import { questionBank } from '../data/questionBank';
 
-const TOTAL_TEST_TIME = 30 * 60; // 30 minutes in seconds
+const TOTAL_TEST_TIME = 6 * 60; // 30 minutes in seconds
+const WARNING_TIME = 5 * 60;
 
 // 1. --- ADD { onResume } ---
 // The component needs to receive the 'onResume' function as a prop
@@ -94,13 +95,12 @@ function TestPage() {
 
     // --- Timer Logic ---
     const timer = setInterval(() => {
-      // Don't count down if the warning is visible
       if (showWarning) return;
 
       setTimeLeft((prevTime) => {
         if (prevTime <= 1) {
           clearInterval(timer);
-          navigate('/dashboard');
+          navigate('/test/terminated');
           return 0;
         }
         return prevTime - 1;
@@ -169,10 +169,7 @@ function TestPage() {
         <ThemeToggle />
       </div>
 
-      <div
-        className="test-box"
-        style={{ filter: showWarning ? 'blur(5px)' : 'none' }}
-      >
+      <div className="test-box" style={{ filter: showWarning ? 'blur(5px)' : 'none' }}>
         {/* --- (Header, Body, and Footer JSX were all correct) --- */}
         <div className="test-header">
           <div className="progress-info">
@@ -188,7 +185,11 @@ function TestPage() {
           </div>
           <div className="timer-container">
             <IonIcon icon={timeOutline} className="timer-icon" />
-            <span className="timer-text">{formatTime(timeLeft)} left</span>
+            <span 
+              className={`timer-text ${timeLeft <= WARNING_TIME ? 'warning' : ''}`}
+            >
+              {formatTime(timeLeft)} left
+            </span>
           </div>
         </div>
 
