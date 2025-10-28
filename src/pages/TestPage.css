@@ -1,0 +1,248 @@
+/* src/pages/TestPage.css */
+
+/* --- Main Layout --- */
+.test-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: var(--background-color);
+  padding: 2rem;
+  overflow: hidden; /* Prevent body scroll */
+}
+
+/* This is the main white card */
+.test-box {
+  width: 100%;
+  max-width: 800px; /* Wider for test content */
+  background-color: var(--navbar-bg);
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.07);
+  padding: 2rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+/* --- Header --- */
+.test-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+body.theme-dark .test-header {
+  border-bottom-color: #333;
+}
+
+.progress-info {
+  flex-grow: 1;
+}
+
+.progress-text {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-light);
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.progress-bar-container {
+  width: 100%;
+  max-width: 300px;
+  height: 8px;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+body.theme-dark .progress-bar-container {
+  background-color: #333;
+}
+
+.progress-bar-fill {
+  height: 100%;
+  background-color: var(--accent-color);
+  border-radius: 4px;
+  transition: width 0.3s ease;
+}
+
+.timer-container {
+  display: flex;
+  align-items: center;
+  background-color: #f7f7f7;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  border: 1px solid #eee;
+}
+
+body.theme-dark .timer-container {
+  background-color: #2a2a2a;
+  border-color: #333;
+}
+
+.timer-icon {
+  font-size: 1.2rem;
+  color: var(--text-light);
+  margin-right: 0.5rem;
+}
+
+.timer-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+/* --- Question Body --- */
+.question-body {
+  padding: 2rem 0;
+}
+
+.question-text {
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--text-color);
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.options-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.option-item {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+body.theme-dark .option-item {
+  border-color: #444;
+}
+
+.option-item:hover {
+  background-color: #f9f9f9;
+}
+
+body.theme-dark .option-item:hover {
+  background-color: #2a2a2a;
+}
+
+/* Selected State */
+.option-item.selected {
+  border-color: var(--accent-color);
+  background-color: #fff8f9;
+  box-shadow: 0 0 5px rgba(199, 0, 57, 0.1);
+}
+
+body.theme-dark .option-item.selected {
+  background-color: #2f000c;
+  border-color: var(--accent-color);
+}
+
+.radio-button {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: 2px solid #ccc;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+body.theme-dark .radio-button {
+  border-color: #666;
+}
+
+.option-item.selected .radio-button {
+  border-color: var(--accent-color);
+}
+
+.radio-button-inner {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--accent-color);
+}
+
+.option-text {
+  font-size: 1rem;
+  color: var(--text-color);
+  line-height: 1.5;
+}
+
+/* --- Footer --- */
+.test-footer {
+  display: flex;
+  justify-content: space-between; /* 1. CHANGE THIS (was flex-end) */
+  align-items: center;            /* 2. ADD THIS */
+  padding-top: 1.5rem;
+  border-top: 1px solid #eee;
+}
+
+body.theme-dark .test-footer {
+  border-top-color: #333;
+}
+
+/* --- 3. ADD STYLES FOR THE NEW BUTTON --- */
+.clear-button {
+  background-color: transparent;
+  color: var(--text-light);
+  border: 1px solid #ccc;
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clear-button:hover {
+  background-color: #f7f7f7;
+  color: var(--text-color);
+}
+
+body.theme-dark .clear-button {
+  border-color: #444;
+}
+
+body.theme-dark .clear-button:hover {
+  background-color: #2a2a2a;
+  color: var(--text-color);
+}
+
+.submit-button {
+  background-color: var(--accent-color);
+  color: #ffffff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.submit-button:hover {
+  background-color: var(--accent-hover);
+}
+
+/* --- Theme Toggle Wrapper --- */
+.theme-toggle-wrapper {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 10;
+}

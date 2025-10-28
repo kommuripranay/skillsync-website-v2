@@ -1,8 +1,5 @@
 /* src/pages/SignUp.css */
 
-/* Add RGB version of your accent color to :root if you don't have it */
-/* :root { ... other vars ... --rgb-accent-color: 199, 0, 57; } */
-
 .signup-page-container {
   display: flex;
   min-height: 100vh;
@@ -13,15 +10,15 @@
 .signup-left-half {
   flex: 1;
   display: flex;
-  align-items: flex-start; /* Changed from 'center' to 'flex-start' */
-  justify-content: center; /* Keeps horizontal centering of the content block */
+  align-items: flex-start; /* <<< Align content to the top */
+  justify-content: center; /* Horizontally center the content block */
   color: #ffffff;
-  background-image: url('../assets/signup-background.jpg');
+  background-image: url('../assets/signup-background.jpg'); /* Make sure this path is correct */
   background-size: cover;
   background-position: center;
   position: relative;
   padding: 2rem;
-  padding-top: 4rem; /* Add more padding at the top if needed */
+  padding-top: 4rem; /* <<< Add padding at the top */
 }
 
 .signup-left-half::before {
@@ -31,92 +28,106 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.85); /* Pinkish-red overlay */
 }
 
 .left-content {
   position: relative;
-  padding-top: 4vh;
   z-index: 1;
-  text-align: left; /* <<< Align content left >>> */
-  max-width: 80%;
-  width: 100%; /* Ensure it takes available width */
+  text-align: left; /* Align content left */
+  max-width: 400px;
+  width: 100%;
 }
 
 .left-heading {
-  font-size: 2rem;
-  margin-bottom: 1.5rem;
+  font-size: 2.5rem;
+  margin-bottom: 0.5rem; /* Reduced margin */
   font-weight: 700;
-  text-align: left; /* Ensure heading itself is left-aligned */
+  text-align: left;
+}
+
+/* New style for subheading */
+.left-subheading {
+  font-size: 1rem;
+  font-weight: 400;
+  color: #e0e0e0;
+  margin-bottom: 1.5rem;
+  text-align: left;
+  line-height: 1.5;
 }
 
 /* Dropdown styles */
 .dropdown-container {
   margin-top: 1.5rem;
-  text-align: left; /* Keep container aligned left */
+  text-align: left;
 }
 
 .dropdown-toggle {
-  /* <<< Remove background and border, add color >>> */
   background-color: transparent;
   border: none;
-  color: var(--accent-color); /* Use accent color for text */
-  padding: 0; /* Remove padding */
+  color: var(--accent-color); /* Use accent color */
+  padding: 0;
   cursor: pointer;
   font-size: 1rem;
   font-weight: 600;
-  display: inline-flex; /* Use flex to align icon */
-  align-items: center; /* Align icon vertically */
-  transition: color 0.3s ease; /* Add transition for text color */
+  display: inline-flex;
+  align-items: center;
+  transition: color 0.3s ease;
 }
 
 .dropdown-toggle:hover {
-  /* <<< Change hover effect >>> */
-  color: #E01E5A; /* Using accent-hover color */
-}
-
-.dropdown-arrow-icon {
-  margin-left: 6px; /* Adjust space */
-  vertical-align: middle;
-  font-size: 1.2em; /* Adjust size if needed */
-  transition: transform 0.3s ease; /* Optional: animate arrow rotation */
+  color: #E01E5A; /* Accent-hover color */
 }
 
 /* --- Dropdown List Animation --- */
 .dropdown-list {
-  list-style-type: disc; /* Use standard bullets */
+  list-style-type: none; /* Remove default bullets */
   margin-top: 1rem;
-  margin-left: 0; /* Remove auto margins */
-  padding: 0; /* Remove padding initially */
-  padding-left: 20px; /* Add space for bullets */
-  /* <<< Animation styles >>> */
+  margin-left: 0;
+  padding: 0; /* Remove all padding */
   max-height: 0;
   overflow: hidden;
-  transition: max-height 0.5s ease-out, padding-top 0.5s ease-out, margin-top 0.5s ease-out; /* Smooth transition */
+  transition: max-height 0.5s ease-out, padding-top 0.5s ease-out,
+    margin-top 0.5s ease-out;
   text-align: left;
-  max-width: 400px; /* Match left-content width */
+  max-width: 400px;
 }
 
 .dropdown-list.show {
-  /* <<< State when list is visible >>> */
-  max-height: 300px; /* Adjust to fit content, approx height */
+  max-height: 400px; /* Increased max-height for new content */
   margin-top: 1rem;
-  /* Add padding-top for spacing when shown */
   padding-top: 0.5rem;
 }
 /* --- End Animation Styles --- */
 
 .dropdown-list li {
-  margin-bottom: 0.75rem; /* Space between items */
+  display: flex;
+  align-items: flex-start; /* Align icon with top of text block */
+  gap: 10px; /* Space between icon and text block */
+  margin-bottom: 1rem;
+  line-height: 1.5;
+  color: #f0f0f0;
+}
+
+.list-item-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px; /* Space between heading and description */
+}
+
+.list-item-heading {
+  color: #ffffff; /* Brighter white */
+  font-weight: 600;
   font-size: 0.95rem;
-  line-height: 1.5; /* Improve readability */
-  color: #f0f0f0; /* Lighter text for readability on overlay */
+  line-height: 1.4;
 }
 
-.dropdown-list li:last-child {
-  margin-bottom: 0;
+.list-item-description {
+  color: #e0e0e0; /* Dimmer white */
+  font-size: 0.9rem;
+  font-weight: 400;
+  line-height: 1.4;
 }
-
 
 /* Right Half */
 .signup-right-half {
@@ -149,12 +160,10 @@
   color: var(--accent-color);
   font-weight: 600;
   text-decoration: none;
-  /* padding-left: 4px; No longer needed with icon */
 }
 .signin-prompt.top-right a:hover {
   text-decoration: underline;
 }
-
 
 .right-content-wrapper {
   width: 100%;
@@ -222,7 +231,7 @@
   background-color: #e0e0e0;
 }
 .separator-text {
-   font-size: 0.875rem;
+  font-size: 0.875rem;
 }
 
 /* Form styles */
@@ -260,12 +269,12 @@
   padding: 0.75rem 1rem;
   border-radius: 5px;
   font-size: 1rem;
-  font-weight: 600; /* Adjusted from bold */
+  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s ease;
   width: 100%;
   margin-top: 1.5rem;
-  display: flex; /* Needed for icon alignment */
+  display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
@@ -274,7 +283,6 @@
 .create-account-button:hover {
   background-color: var(--accent-hover);
 }
-
 
 /* --- Icon Styles --- */
 
@@ -294,16 +302,29 @@
   font-size: 1.1em;
 }
 
+/* New icon style for the list */
+.dropdown-list-icon {
+  color: var(--accent-color);
+  font-size: 1.3em;
+  margin-top: 3px; /* Align with heading text */
+  flex-shrink: 0;
+}
+
 /* Ensure icons inherit colors */
 .dropdown-toggle ion-icon,
 .dropdown-toggle .dropdown-arrow-icon,
 .signin-prompt a ion-icon,
 .signin-prompt a .signin-arrow-icon,
 .create-account-button ion-icon,
-.create-account-button .button-arrow-icon {
+.create-account-button .button-arrow-icon,
+.dropdown-list-icon {
   color: inherit;
 }
 
+/* Override checkmark color */
+.dropdown-list-icon {
+  color: var(--accent-color);
+}
 
 /* --- Responsive Adjustments --- */
 @media (max-width: 900px) {
@@ -315,7 +336,6 @@
   }
 }
 
-
 @media (max-width: 768px) {
   .signup-page-container {
     flex-direction: column;
@@ -325,45 +345,63 @@
   .signup-left-half {
     min-height: 200px;
     height: auto;
-    padding: 1rem 3rem;
-    align-items: flex-start; /* Keep top alignment on mobile */
+    padding: 1.5rem 1rem;
+    align-items: flex-start; /* Keep top alignment */
     justify-content: center;
     flex: none;
+    padding-top: 2rem; /* Mobile top padding */
   }
 
   .signup-left-half::before {
-    background: rgba(0, 0, 0, 0.8);
+    background: rgba(0, 0, 0, 0.85); /* Keep overlay */
   }
 
   .left-content {
     margin-bottom: 0;
-    text-align: left; /* Keep left alignment */
-    max-width: 100%; /* Use full width */
+    text-align: left;
+    max-width: 100%;
   }
 
   .left-heading {
     font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .left-subheading {
+    font-size: 0.9rem;
     margin-bottom: 1rem;
-    text-align: left; /* Keep left alignment */
   }
 
   .dropdown-container {
-    text-align: left; /* Keep left alignment */
+    text-align: left;
   }
 
   .dropdown-toggle {
-    padding: 0; /* Keep no padding */
+    padding: 0;
     font-size: 0.9rem;
   }
 
   .dropdown-list {
     font-size: 0.9rem;
-    padding-left: 20px; /* Keep bullet padding */
+    padding-left: 0; /* Remove old bullet padding */
     max-width: 100%;
   }
+
   .dropdown-list.show {
-    padding-top: 0.5rem; /* Keep animation padding */
-    padding-bottom: 2rem;
+    padding-top: 0.5rem;
+    padding-bottom: 1rem; /* Added padding */
+  }
+
+  .dropdown-list li {
+    gap: 8px;
+    margin-bottom: 0.75rem;
+  }
+
+  .list-item-heading {
+    font-size: 0.9rem;
+  }
+  .list-item-description {
+    font-size: 0.85rem;
   }
 
   .signup-right-half {
@@ -384,20 +422,23 @@
   .right-content-wrapper {
     max-width: 100%;
     margin-top: 0;
-    text-align: left; /* Keep left alignment */
+    text-align: left;
   }
 
   .right-heading {
     font-size: 1.5rem;
     margin-bottom: 1.2rem;
-    text-align: left; /* Keep left alignment */
+    text-align: left;
   }
 
-  .social-logins, .signup-form {
+  .social-logins,
+  .signup-form {
     gap: 0.75rem;
   }
 
-  .social-button, .create-account-button, .input-group input {
+  .social-button,
+  .create-account-button,
+  .input-group input {
     padding: 0.7rem 1rem;
     font-size: 0.9rem;
   }
@@ -408,15 +449,11 @@
 
   .create-account-button {
     margin-top: 1rem;
-    gap: 6px; /* Adjust gap for mobile */
+    gap: 6px;
   }
 
   .social-button svg {
     width: 18px;
     height: 18px;
-  }
-
-  .dropdown-arrow-icon, .button-arrow-icon, .signin-arrow-icon {
-    font-size: 1em; /* Adjust icon sizes slightly for mobile if needed */
   }
 }

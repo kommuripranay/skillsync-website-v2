@@ -9,7 +9,7 @@ function Navbar() {
       {/* Use the imported image in an img tag */}
       <Link to="/" className="navbar-logo">
         <img src={logoImage} alt="SkillSync Logo" height="500" /> {/* Adjust height */}
-        <span>SkillSync</span> {/* Wrap the text in a span */}
+        {/* <span>SkillSync</span>  Wrap the text in a span */}
       </Link>
       <ul className="navbar-links">
         <li>
