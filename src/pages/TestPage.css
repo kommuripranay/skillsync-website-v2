@@ -246,3 +246,76 @@ body.theme-dark .clear-button:hover {
   right: 1.5rem;
   z-index: 10;
 }
+
+/* ... (All your existing styles) ... */
+
+/* --- Warning Modal Styles --- */
+.warning-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(3px);
+}
+
+.warning-box {
+  background: var(--navbar-bg);
+  padding: 2.5rem;
+  border-radius: 12px;
+  text-align: center;
+  max-width: 450px;
+  width: 90%;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+  border-top: 5px solid var(--accent-color);
+}
+
+.warning-icon {
+  font-size: 3.5rem;
+  color: var(--accent-color);
+  margin-bottom: 1rem;
+}
+
+.warning-box h2 {
+  color: var(--text-color);
+  font-size: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.warning-box p {
+  color: var(--text-light);
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+.warning-box p:last-child {
+  margin-bottom: 0;
+}
+
+/* ... (All your existing styles, including .warning-box, are unchanged) ... */
+
+/* --- Style for the new "OK" button --- */
+.resume-button {
+  background-color: var(--accent-color);
+  color: #ffffff;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+  margin-top: 1rem; /* Add some space above it */
+}
+
+.resume-button:hover {
+  background-color: var(--accent-hover);
+}
