@@ -22,7 +22,7 @@ body, h1, p, ul, li, button, input, label {
 body {
   background-color: var(--background-color);
   color: var(--text-color);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
 body.theme-dark {
@@ -38,7 +38,7 @@ body.theme-dark {
 
 /* 4. Fix dark mode link colors */
 body.theme-dark a {
-  color: var(--accent-color);
+  color: var(--text-color);
 }
 
 /* Simple styling for the page content */

@@ -1,0 +1,109 @@
+.manage-skills-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: var(--background-color);
+  padding: 2rem;
+}
+
+.manage-skills-box {
+  width: 100%;
+  max-width: 600px;
+  background-color: var(--navbar-bg);
+  padding: 2.5rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.manage-skills-box h1 {
+  color: var(--text-color);
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.manage-skills-box p {
+  color: var(--text-light);
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.skill-list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem 0;
+  max-height: 400px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  border-radius: 5px;
+}
+
+body.theme-dark .skill-list {
+  border-color: #333;
+}
+
+.skill-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+  border-bottom: 1px solid #eee;
+}
+
+body.theme-dark .skill-item {
+  border-bottom-color: #333;
+}
+
+.skill-item:last-child {
+  border-bottom: none;
+}
+
+.skill-name {
+  font-size: 1.1rem;
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.skill-toggle-btn {
+  border: none;
+  border-radius: 5px;
+  padding: 0.5rem 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.skill-toggle-btn.add {
+  background-color: #e0f2fe; /* Light blue bg */
+  color: #0c63d4;
+}
+.skill-toggle-btn.add:hover {
+  background-color: #bce6ff;
+}
+
+.skill-toggle-btn.remove {
+  background-color: #fff8f9; /* Light red bg */
+  color: var(--accent-color);
+  border: 1px solid var(--accent-color);
+}
+.skill-toggle-btn.remove:hover {
+  background-color: #ffeaea;
+}
+
+.done-btn {
+  background-color: var(--accent-color);
+  color: #ffffff;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  width: 100%;
+}
+
+.done-btn:hover {
+  background-color: var(--accent-hover);
+}

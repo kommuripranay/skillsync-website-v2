@@ -218,3 +218,16 @@
     font-size: 0.875rem;
   }
 }
+/* src/pages/SignIn.css */
+/* ... (all other styles) ... */
+
+.auth-error {
+  color: var(--accent-color);
+  background-color: #fff8f9;
+  border: 1px solid var(--accent-color);
+  padding: 0.75rem;
+  border-radius: 5px;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  text-align: left;
+}

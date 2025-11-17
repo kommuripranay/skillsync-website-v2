@@ -91,3 +91,103 @@ body.theme-dark .theme-toggle-button:hover {
   border-color: #555;
   background-color: rgba(255,255,255,0.05);
 }
+
+/* ... (all existing styles) ... */
+
+/* --- Empty State --- */
+.empty-dashboard {
+  text-align: center;
+  background-color: var(--navbar-bg);
+  padding: 3rem 2rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+.empty-dashboard p {
+  font-size: 1.2rem;
+  color: var(--text-light);
+  margin-bottom: 1.5rem;
+}
+.add-skill-button {
+  background-color: var(--accent-color);
+  color: #fff;
+  text-decoration: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+.add-skill-button:hover {
+  background-color: var(--accent-hover);
+}
+
+/* --- Skill Card (Replaces skill-test-button) --- */
+.skill-test-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.skill-card {
+  background-color: var(--navbar-bg);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease;
+}
+.skill-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+}
+
+.skill-card-name {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0 0 0.5rem 0;
+}
+
+.skill-card-score {
+  font-size: 1rem;
+  color: var(--text-light);
+  margin: 0 0 1.5rem 0;
+  flex-grow: 1;
+}
+
+.skill-test-button {
+  display: block;
+  width: 100%;
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--accent-color);
+  background-color: #fff8f9;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+body.theme-dark .skill-test-button {
+  background-color: #2f000c;
+  color: var(--accent-color);
+}
+.skill-test-button:hover {
+  background-color: var(--accent-color);
+  color: #fff;
+}
+
+/* --- Edit Skills Footer --- */
+.edit-skills-footer {
+  text-align: center;
+  margin-top: 2rem;
+}
+.edit-skills-button {
+  color: var(--text-light);
+  text-decoration: none;
+  font-weight: 500;
+}
+.edit-skills-button:hover {
+  color: var(--text-color);
+  text-decoration: underline;
+}

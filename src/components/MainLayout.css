@@ -1,0 +1,115 @@
+/* --- Main App Layout --- */
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex-grow: 1;
+  /* Add padding to prevent content from touching the header */
+  padding-top: 80px; /* Height of the navbar + 1rem */
+}
+
+/* --- Navbar Container --- */
+.navbar-container {
+  background-color: var(--navbar-bg);
+  padding: 0 2rem;
+  border-bottom: 1px solid #eee;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  
+  /* Fixed position */
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  height: 64px; /* Set a fixed height */
+  display: flex;
+  align-items: center;
+}
+
+body.theme-dark .navbar-container {
+  border-bottom: 1px solid #333;
+}
+
+/* --- Navbar Content --- */
+.navbar {
+  width: 100%;
+  max-width: 1200px; /* Max width for content */
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.navbar-left,
+.navbar-right {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.navbar-logo {
+  display: flex;
+  align-items: center;
+  margin-right: 1rem;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 1.5rem;
+}
+
+.navbar-link {
+  text-decoration: none;
+  color: var(--text-light);
+  font-weight: 500;
+  font-size: 0.95rem;
+  transition: color 0.2s ease;
+}
+
+.navbar-link:hover {
+  color: var(--text-color);
+}
+
+/* --- Navbar Buttons --- */
+.navbar-button {
+  text-decoration: none;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 5px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+/* Primary Button (e.g., Sign Up) */
+.navbar-button.primary {
+  background-color: var(--accent-color);
+  color: #fff;
+}
+
+.navbar-button.primary:hover {
+  background-color: var(--accent-hover);
+}
+
+/* Secondary Button (e.g., Sign Out) */
+.navbar-button.secondary {
+  background-color: #eee;
+  color: #333;
+}
+
+.navbar-button.secondary:hover {
+  background-color: #ddd;
+}
+
+body.theme-dark .navbar-button.secondary {
+  background-color: #333;
+  color: #eee;
+}
+
+body.theme-dark .navbar-button.secondary:hover {
+  background-color: #444;
+}
