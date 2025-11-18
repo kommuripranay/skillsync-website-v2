@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // Import hooks
+import { Link, useParams, useNavigate } from 'react-router-dom';
 import './TestInstructions.css';
 import { IonIcon } from '@ionic/react';
 import { arrowForwardOutline, chevronForwardOutline } from 'ionicons/icons';
 import ThemeToggle from '../components/ThemeToggle/ThemeToggle'; // 1. Import
+import { supabase } from '../supabaseClient';
 
 // --- Inactivity Modal Component ---
 const InactivityModal = ({ countdown, onStay }) => (
@@ -26,51 +27,59 @@ const MODAL_COUNTDOWN_S = 5;      // 5 seconds (for testing)
 
 
 function TestInstructions() {
-  const { skillName } = useParams(); // Get skill name from URL
-  const navigate = useNavigate();      // Hook for navigation
+  const { skillName } = useParams(); // This is the Skill ID
+  const navigate = useNavigate();
 
   const [showModal, setShowModal] = useState(false);
   const [countdown, setCountdown] = useState(MODAL_COUNTDOWN_S);
+  
+  // --- NEW STATE for API ---
+  const [realSkillName, setRealSkillName] = useState(''); // Stores "Python", "Java", etc.
+  const [selectedLevel, setSelectedLevel] = useState(20); // Default: Beginner
 
-  // Refs to store timer IDs
   const inactivityTimerRef = useRef(null);
   const modalTimerRef = useRef(null);
 
   // Capitalize skill name
-  const skill = skillName.charAt(0).toUpperCase() + skillName.slice(1);
+  useEffect(() => {
+    const fetchSkillName = async () => {
+      if (!skillName) return;
+      const { data, error } = await supabase
+        .from('skills')
+        .select('name')
+        .eq('id', skillName)
+        .single();
+      
+      if (data) setRealSkillName(data.name);
+    };
+    fetchSkillName();
+  }, [skillName]);
 
   // --- Timeout Logic ---
   const resetInactivityTimer = () => {
-    // Clear existing timers
     if (inactivityTimerRef.current) clearTimeout(inactivityTimerRef.current);
     if (modalTimerRef.current) clearInterval(modalTimerRef.current);
-
-    // Hide modal and reset countdown
     setShowModal(false);
     setCountdown(MODAL_COUNTDOWN_S);
-
-    // Start new inactivity timer
     inactivityTimerRef.current = setTimeout(() => {
-      setShowModal(true); // Show modal when timer fires
+      setShowModal(true);
     }, INACTIVITY_TIMEOUT_MS);
   };
 
   // Run when modal visibility changes
   useEffect(() => {
     if (showModal) {
-      // Start the modal's 60-second countdown
       modalTimerRef.current = setInterval(() => {
         setCountdown((prev) => {
           if (prev <= 1) {
             clearInterval(modalTimerRef.current);
-            navigate('/dashboard'); // Time's up! Go to dashboard
+            navigate('/dashboard');
             return 0;
           }
           return prev - 1;
         });
       }, 1000);
     }
-    // Cleanup interval on unmount or if modal is hidden
     return () => clearInterval(modalTimerRef.current);
   }, [showModal, navigate]);
 
@@ -78,12 +87,8 @@ function TestInstructions() {
   // and reset it on any user activity
   useEffect(() => {
     resetInactivityTimer();
-    
-    // Listen for activity
     window.addEventListener('mousemove', resetInactivityTimer);
     window.addEventListener('keydown', resetInactivityTimer);
-
-    // Cleanup timers and listeners on unmount
     return () => {
       clearTimeout(inactivityTimerRef.current);
       clearInterval(modalTimerRef.current);
@@ -92,19 +97,22 @@ function TestInstructions() {
     };
   }, []);
 
-  const handleStartTest = () => {
-    // Navigate to the dummy test page for the specific skill
-    navigate(`/test/start/${skillName}`);
-  };
-
   const handleStay = () => {
     resetInactivityTimer();
   };
-  // -------------------------
+
+  const handleStartTest = () => {
+    // Pass the selected level and text name to the test page
+    navigate(`/test/start/${skillName}`, {
+      state: { 
+        initialLevel: selectedLevel,
+        skillNameText: realSkillName || skillName 
+      }
+    });
+  };
 
   return (
     <div className="test-instructions-page">
-      {/* Show modal if state is true */}
       <div className="theme-toggle-wrapper">
         <ThemeToggle />
       </div>
@@ -113,18 +121,18 @@ function TestInstructions() {
       <div className="instructions-box">
         <h1 className="instructions-title">Skill Test Instructions</h1>
         <h2 className="instructions-skill-name">
-          You are about to start the test for: <strong>{skill}</strong>
+          You are about to start the test for: <strong>{realSkillName || skillName}</strong>
         </h2>
 
-        {/* ... (rest of the list items are unchanged) ... */}
         <ul className="instructions-list">
+          {/* ... (List items unchanged) ... */}
           <li>
             <IonIcon icon={chevronForwardOutline} className="instructions-list-icon" />
             <span>The test has a total time limit of <strong>30 minutes</strong>.</span>
           </li>
           <li>
             <IonIcon icon={chevronForwardOutline} className="instructions-list-icon" />
-            <span>You will be presented with approximately <strong>12-15 questions</strong>.</span>
+            <span>You will be presented with approximately <strong>10-15 questions</strong>.</span>
           </li>
           <li>
             <IonIcon icon={chevronForwardOutline} className="instructions-list-icon" />
@@ -132,17 +140,35 @@ function TestInstructions() {
           </li>
           <li>
             <IonIcon icon={chevronForwardOutline} className="instructions-list-icon" />
-            <span>You <strong>must answer every question</strong> to proceed. You cannot skip or go back.</span>
-          </li>
-          <li>
-            <IonIcon icon={chevronForwardOutline} className="instructions-list-icon" />
-            <span>Your time per question is recorded to measure fluency, so answer as quickly and accurately as possible.</span>
-          </li>
-          <li>
-            <IonIcon icon={chevronForwardOutline} className="instructions-list-icon" />
-            <span>Please complete this test on your own, without assistance or external resources.</span>
+            <span>You <strong>must answer every question</strong> to proceed.</span>
           </li>
         </ul>
+
+        {/* --- 3. Add Difficulty Selector --- */}
+        <div style={{ margin: '1.5rem 0', textAlign: 'left' }}>
+          <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '600', color: 'var(--text-color)' }}>
+            Select your experience level:
+          </label>
+          <select 
+            value={selectedLevel} 
+            onChange={(e) => setSelectedLevel(Number(e.target.value))}
+            style={{ 
+              padding: '0.8rem', 
+              borderRadius: '5px', 
+              border: '1px solid var(--border-color)', 
+              width: '100%', 
+              fontSize: '1rem',
+              backgroundColor: 'var(--navbar-bg)',
+              color: 'var(--text-color)'
+            }}
+          >
+            <option value={20}>Novice (Student / &lt; 1 yr)</option>
+            <option value={40}>Beginner (Junior / 1-2 yrs)</option>
+            <option value={60}>Intermediate (Mid-level / 2-4 yrs)</option>
+            <option value={80}>Advanced (Senior / 5+ yrs)</option>
+            <option value={95}>Expert (Principal / Architect)</option>
+          </select>
+        </div>
 
         <button className="start-button" onClick={handleStartTest}>
           Start Test
