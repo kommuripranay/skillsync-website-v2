@@ -141,15 +141,22 @@ body.theme-dark .theme-toggle-button:hover {
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
+.skill-card-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 2rem;
+}
+
 .skill-card-name {
-  font-size: 1.4rem;
+  font-size: 1.1rem;
   font-weight: 600;
   color: var(--text-color);
   margin: 0 0 0.5rem 0;
 }
 
 .skill-card-score {
-  font-size: 1rem;
+  font-size: 0.9rem;
   color: var(--text-light);
   margin: 0 0 1.5rem 0;
   flex-grow: 1;
@@ -161,7 +168,7 @@ body.theme-dark .theme-toggle-button:hover {
   padding: 0.75rem 1.5rem;
   border-radius: 5px;
   text-align: center;
-  font-size: 1rem;
+  font-size: 0.9rem;
   font-weight: 600;
   color: var(--accent-color);
   background-color: #fff8f9;
