@@ -2,6 +2,8 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import os
+# --- 1. IMPORT CORS MIDDLEWARE ---
+from fastapi.middleware.cors import CORSMiddleware
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
 import json
@@ -19,6 +21,17 @@ if not google_api_key:
 # Initialize FastAPI app
 # -----------------------------
 app = FastAPI(title="Adaptive Skill Evaluation API")
+
+# -----------------------------
+# 2. ADD CORS MIDDLEWARE CONFIGURATION
+# -----------------------------
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allows all origins (like localhost:5173)
+    allow_credentials=True,
+    allow_methods=["*"],  # Allows all methods (POST, GET, etc.)
+    allow_headers=["*"],  # Allows all headers
+)
 
 # -----------------------------
 # Initialize Gemini LLM
