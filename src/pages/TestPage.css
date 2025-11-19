@@ -335,3 +335,116 @@ body.theme-dark .clear-button:hover {
   color: var(--accent-color);
   font-weight: 700;
 }
+
+/* Add these to your existing TestPage.css */
+
+.test-footer {
+  display: flex;
+  flex-direction: column; /* Stack error above buttons */
+  gap: 1rem;
+  margin-top: 2rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+}
+
+/* Wrapper for the buttons to keep them side-by-side */
+.footer-buttons {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+
+/* The Error Message Styling */
+.submission-error {
+  color: #d93025; /* Google Red */
+  background-color: #fce8e6;
+  padding: 0.75rem;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Dark Mode Adjustment */
+body.theme-dark .submission-error {
+  background-color: #5c1e1e;
+  color: #ffb4ab;
+}
+
+/* ... existing styles ... */
+
+/* --- Footer Layout --- */
+.footer-buttons {
+  display: flex;
+  justify-content: space-between; /* Pushes left and right groups apart */
+  align-items: center;
+  width: 100%;
+}
+
+.footer-right {
+  display: flex;
+  gap: 1rem; /* Space between Clear and Submit */
+}
+
+/* --- New Exit Button --- */
+.exit-test-button {
+  background: transparent;
+  color: var(--text-light);
+  border: 1px solid var(--border-color);
+  padding: 0.75rem 1.2rem;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s ease;
+}
+
+.exit-test-button:hover {
+  background-color: #fff1f0; /* Very light red tint */
+  color: #d93025;           /* Google Red */
+  border-color: #d93025;
+}
+
+body.theme-dark .exit-test-button:hover {
+  background-color: #3b1214;
+  color: #ffb4ab;
+  border-color: #ffb4ab;
+}
+
+/* --- Existing Buttons (Ensuring they look good) --- */
+.clear-button {
+  background-color: transparent;
+  color: var(--accent-color);
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.75rem 1.2rem;
+  border-radius: 8px;
+}
+.clear-button:hover {
+  background-color: rgba(0,0,0,0.05);
+}
+
+.submit-button {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  padding: 0.75rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.submit-button:hover {
+  background-color: var(--accent-hover);
+}

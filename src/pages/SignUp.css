@@ -1,459 +1,175 @@
-/* src/pages/SignUp.css */
-
+/* Container for the split layout */
 .signup-page-container {
   display: flex;
   min-height: 100vh;
+  width: 100%;
   background-color: var(--background-color);
 }
 
-/* Left Half */
+.page-theme-toggle {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+}
+
+/* --- Left Half (Form) --- */
 .signup-left-half {
   flex: 1;
   display: flex;
-  align-items: flex-start; /* <<< Align content to the top */
-  justify-content: center; /* Horizontally center the content block */
-  color: #ffffff;
-  background-image: url('../assets/signup-background.jpg'); /* Make sure this path is correct */
-  background-size: cover;
-  background-position: center;
-  position: relative;
-  padding: 2rem;
-  padding-top: 4rem; /* <<< Add padding at the top */
-}
-
-.signup-left-half::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.85); /* Pinkish-red overlay */
-}
-
-.left-content {
-  position: relative;
-  z-index: 1;
-  text-align: left; /* Align content left */
-  max-width: 400px;
-  width: 100%;
-}
-
-.left-heading {
-  font-size: 2.5rem;
-  margin-bottom: 0.5rem; /* Reduced margin */
-  font-weight: 700;
-  text-align: left;
-}
-
-/* New style for subheading */
-.left-subheading {
-  font-size: 1rem;
-  font-weight: 400;
-  color: #e0e0e0;
-  margin-bottom: 1.5rem;
-  text-align: left;
-  line-height: 1.5;
-}
-
-/* Dropdown styles */
-.dropdown-container {
-  margin-top: 1.5rem;
-  text-align: left;
-}
-
-.dropdown-toggle {
-  background-color: transparent;
-  border: none;
-  color: var(--accent-color); /* Use accent color */
-  padding: 0;
-  cursor: pointer;
-  font-size: 1rem;
-  font-weight: 600;
-  display: inline-flex;
-  align-items: center;
-  transition: color 0.3s ease;
-}
-
-.dropdown-toggle:hover {
-  color: #E01E5A; /* Accent-hover color */
-}
-
-/* --- Dropdown List Animation --- */
-.dropdown-list {
-  list-style-type: none; /* Remove default bullets */
-  margin-top: 1rem;
-  margin-left: 0;
-  padding: 0; /* Remove all padding */
-  max-height: 0;
-  overflow: hidden;
-  transition: max-height 0.5s ease-out, padding-top 0.5s ease-out,
-    margin-top 0.5s ease-out;
-  text-align: left;
-  max-width: 400px;
-}
-
-.dropdown-list.show {
-  max-height: 400px; /* Increased max-height for new content */
-  margin-top: 1rem;
-  padding-top: 0.5rem;
-}
-/* --- End Animation Styles --- */
-
-.dropdown-list li {
-  display: flex;
-  align-items: flex-start; /* Align icon with top of text block */
-  gap: 10px; /* Space between icon and text block */
-  margin-bottom: 1rem;
-  line-height: 1.5;
-  color: #f0f0f0;
-}
-
-.list-item-content {
-  display: flex;
-  flex-direction: column;
-  gap: 2px; /* Space between heading and description */
-}
-
-.list-item-heading {
-  color: #ffffff; /* Brighter white */
-  font-weight: 600;
-  font-size: 0.95rem;
-  line-height: 1.4;
-}
-
-.list-item-description {
-  color: #e0e0e0; /* Dimmer white */
-  font-size: 0.9rem;
-  font-weight: 400;
-  line-height: 1.4;
-}
-
-/* Right Half */
-.signup-right-half {
-  flex: 1.2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: flex-start;
-  background-color: var(--navbar-bg);
-  padding: 2rem;
-  position: relative;
-  overflow-y: auto;
-  padding-top: 5rem;
-}
-
-/* Sign In prompt */
-.signin-prompt.top-right {
-  position: absolute;
-  top: 1.5rem;
-  right: 2rem;
-  font-size: 0.875rem;
-  margin-top: 0;
-}
-
-.signin-prompt.top-right p {
-  margin: 0;
-}
-
-.signin-prompt.top-right a {
-  color: var(--accent-color);
-  font-weight: 600;
-  text-decoration: none;
-}
-.signin-prompt.top-right a:hover {
-  text-decoration: underline;
-}
-
-.right-content-wrapper {
-  width: 100%;
-  max-width: 500px; /* Wider wrapper */
-  text-align: left;
-  margin-top: 0;
-}
-
-.right-heading {
-  font-size: 1.8rem;
-  font-weight: 600;
-  color: var(--text-color);
-  margin-bottom: 1.5rem;
-  text-align: left;
-}
-
-/* Social Logins */
-.social-logins {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.social-button {
-  background-color: #fff;
-  color: #333;
-  border: 1px solid #ccc;
-  padding: 0.75rem 1rem;
-  border-radius: 5px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-  width: 100%;
-  display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.75rem;
+  padding: 2rem;
+  position: relative;
 }
 
-.social-button svg {
-  width: 20px;
-  height: 20px;
+.signup-content-box {
+  width: 100%;
+  max-width: 400px;
 }
 
-.social-button:hover {
-  background-color: #f7f7f7;
-}
-
-.social-button.linkedin {
-  color: #0A66C2;
-}
-
-.separator {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  color: var(--text-light);
-  margin: 1.5rem 0;
-}
-.separator-line {
-  flex-grow: 1;
-  height: 1px;
-  background-color: #e0e0e0;
-}
-.separator-text {
-  font-size: 0.875rem;
-}
-
-/* Form styles */
-.signup-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.input-group {
-  text-align: left;
-}
-
-.input-group label {
-  display: block;
-  font-size: 0.875rem;
-  font-weight: 500;
+.signup-header h1 {
+  font-size: 2rem;
   margin-bottom: 0.5rem;
+  color: var(--text-color);
+}
+.signup-header p {
+  color: var(--text-light);
+  margin-bottom: 2rem;
+}
+
+/* Input Styling */
+.input-group {
+  position: relative;
+  margin-bottom: 1rem;
+}
+
+.input-icon {
+  position: absolute;
+  left: 1rem;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-light);
+  font-size: 1.2rem;
 }
 
 .input-group input {
   width: 100%;
-  padding: 0.75rem;
+  padding: 0.8rem 1rem 0.8rem 3rem; /* Space for icon */
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--navbar-bg);
+  color: var(--text-color);
   font-size: 1rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  box-sizing: border-box;
-  background-color: #ffffff;
+  transition: border-color 0.2s;
 }
 
-.create-account-button {
-  background-color: var(--accent-color);
-  color: #ffffff;
-  border: none;
-  padding: 0.75rem 1rem;
-  border-radius: 5px;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
+.input-group input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.05);
+}
+
+/* Buttons */
+.signup-button {
   width: 100%;
-  margin-top: 1.5rem;
+  padding: 0.9rem;
+  border-radius: 8px;
+  border: none;
+  background-color: var(--accent-color);
+  color: white;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 1rem;
+  transition: background-color 0.2s;
+}
+.signup-button:hover {
+  background-color: var(--accent-hover);
+}
+
+.error-message {
+  color: red;
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+  text-align: center;
+}
+
+/* Social & Divider */
+.divider {
+  text-align: center;
+  margin: 1.5rem 0;
+  position: relative;
+}
+.divider::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 50%;
+  width: 100%;
+  height: 1px;
+  background-color: var(--border-color);
+}
+.divider span {
+  background-color: var(--background-color);
+  padding: 0 10px;
+  position: relative;
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+.social-buttons {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.social-btn {
+  flex: 1;
+  padding: 0.7rem;
+  border: 1px solid var(--border-color);
+  background-color: var(--navbar-bg);
+  border-radius: 8px;
+  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
+  color: var(--text-color);
+  font-weight: 500;
+}
+.social-btn:hover { background-color: var(--hover-bg); }
+
+.signin-link { text-align: center; color: var(--text-light); }
+.signin-link a { color: var(--accent-color); font-weight: 600; text-decoration: none; }
+
+/* --- Right Half (Branding) --- */
+.signup-right-half {
+  flex: 1;
+  /* Nice purple gradient */
+  background: linear-gradient(135deg, #3b0e57 0%, #7b4ad1 100%); 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  padding: 3rem;
 }
 
-.create-account-button:hover {
-  background-color: var(--accent-hover);
-}
-
-/* --- Icon Styles --- */
-
-.dropdown-arrow-icon {
-  margin-left: 6px;
-  vertical-align: middle;
-  font-size: 1.2em;
-}
-
-.signin-arrow-icon {
-  vertical-align: middle;
-  font-size: 1em;
-  margin-left: 4px;
-}
-
-.button-arrow-icon {
-  font-size: 1.1em;
-}
-
-/* New icon style for the list */
-.dropdown-list-icon {
-  color: var(--accent-color);
-  font-size: 1.3em;
-  margin-top: 3px; /* Align with heading text */
-  flex-shrink: 0;
-}
-
-/* Ensure icons inherit colors */
-.dropdown-toggle ion-icon,
-.dropdown-toggle .dropdown-arrow-icon,
-.signin-prompt a ion-icon,
-.signin-prompt a .signin-arrow-icon,
-.create-account-button ion-icon,
-.create-account-button .button-arrow-icon,
-.dropdown-list-icon {
-  color: inherit;
-}
-
-/* Override checkmark color */
-.dropdown-list-icon {
-  color: var(--accent-color);
-}
-
-/* --- Responsive Adjustments --- */
+/* Mobile Response */
 @media (max-width: 900px) {
-  .signup-left-half {
-    flex: 0.8;
-  }
   .signup-right-half {
-    flex: 1.2;
+    display: none; /* Hide image on small screens */
   }
 }
 
-@media (max-width: 768px) {
-  .signup-page-container {
-    flex-direction: column;
-    min-height: 100vh;
-  }
-
-  .signup-left-half {
-    min-height: 200px;
-    height: auto;
-    padding: 1.5rem 1rem;
-    align-items: flex-start; /* Keep top alignment */
-    justify-content: center;
-    flex: none;
-    padding-top: 2rem; /* Mobile top padding */
-  }
-
-  .signup-left-half::before {
-    background: rgba(0, 0, 0, 0.85); /* Keep overlay */
-  }
-
-  .left-content {
-    margin-bottom: 0;
-    text-align: left;
-    max-width: 100%;
-  }
-
-  .left-heading {
-    font-size: 1.8rem;
-    margin-bottom: 0.5rem;
-  }
-
-  .left-subheading {
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-  }
-
-  .dropdown-container {
-    text-align: left;
-  }
-
-  .dropdown-toggle {
-    padding: 0;
-    font-size: 0.9rem;
-  }
-
-  .dropdown-list {
-    font-size: 0.9rem;
-    padding-left: 0; /* Remove old bullet padding */
-    max-width: 100%;
-  }
-
-  .dropdown-list.show {
-    padding-top: 0.5rem;
-    padding-bottom: 1rem; /* Added padding */
-  }
-
-  .dropdown-list li {
-    gap: 8px;
-    margin-bottom: 0.75rem;
-  }
-
-  .list-item-heading {
-    font-size: 0.9rem;
-  }
-  .list-item-description {
-    font-size: 0.85rem;
-  }
-
-  .signup-right-half {
-    padding: 1.5rem;
-    flex: 1;
-    justify-content: flex-start;
-    overflow-y: auto;
-    padding-top: 1.5rem;
-  }
-
-  .signin-prompt.top-right {
-    position: static;
-    text-align: center;
-    margin-bottom: 1.5rem;
-    font-size: 0.9rem;
-  }
-
-  .right-content-wrapper {
-    max-width: 100%;
-    margin-top: 0;
-    text-align: left;
-  }
-
-  .right-heading {
-    font-size: 1.5rem;
-    margin-bottom: 1.2rem;
-    text-align: left;
-  }
-
-  .social-logins,
-  .signup-form {
-    gap: 0.75rem;
-  }
-
-  .social-button,
-  .create-account-button,
-  .input-group input {
-    padding: 0.7rem 1rem;
-    font-size: 0.9rem;
-  }
-
-  .input-group label {
-    font-size: 0.85rem;
-  }
-
-  .create-account-button {
-    margin-top: 1rem;
-    gap: 6px;
-  }
-
-  .social-button svg {
-    width: 18px;
-    height: 18px;
-  }
+.overlay-content {
+  max-width: 400px;
+}
+.overlay-content h2 {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  line-height: 1.1;
+}
+.overlay-content p {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  line-height: 1.6;
 }
