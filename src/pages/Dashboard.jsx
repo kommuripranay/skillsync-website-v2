@@ -9,7 +9,8 @@ import {
   arrowForwardOutline,
   chevronForwardOutline,
   briefcaseOutline,
-  ribbonOutline
+  compassOutline, // <--- NEW ICON
+  timeOutline     // <--- NEW ICON
 } from 'ionicons/icons';
 
 function Dashboard() {
@@ -28,7 +29,6 @@ function Dashboard() {
       setLoading(true);
       
       try {
-        // 1. Fetch Tracked Skills
         const { data: skillsData } = await supabase
           .from('user_tracked_skills')
           .select(`skill_id, skills ( id, name )`)
@@ -36,7 +36,6 @@ function Dashboard() {
         
         setTrackedSkills(skillsData || []);
 
-        // 2. Fetch Test Results
         const { data: testData } = await supabase
             .from('test_results')
             .select('id, score, created_at, skills(name)')
@@ -46,8 +45,6 @@ function Dashboard() {
         if (testData && testData.length > 0) {
             setRecentTests(testData.slice(0, 5));
             setTotalTests(testData.length);
-            
-            // Calculate Average Score
             const avg = testData.reduce((acc, curr) => acc + curr.score, 0) / testData.length;
             setAvgScore(Math.round(avg));
         }
@@ -67,7 +64,6 @@ function Dashboard() {
       return 'score-low';
   };
 
-  // Helper to calculate left position % based on score (0-1000)
   const getPosition = (score) => Math.min(100, Math.max(0, (score / 1000) * 100));
 
   if (loading) return <div className="dashboard-container" style={{paddingTop:'4rem', textAlign:'center'}}>Loading Dashboard...</div>;
@@ -79,7 +75,7 @@ function Dashboard() {
         <p>Your market value based on {totalTests} assessments.</p>
       </div>
 
-      {/* --- NEW: MARKET DENSITY CHART (Replaces Bar Graph) --- */}
+      {/* --- MARKET DENSITY (Your Standing) --- */}
       <div className="market-density-section">
         {totalTests === 0 ? (
             <div className="empty-density-state">
@@ -102,7 +98,6 @@ function Dashboard() {
                 </div>
 
                 <div className="chart-wrapper">
-                    {/* The Bell Curve SVG (CSS Graphic) */}
                     <svg viewBox="0 0 1000 200" className="density-curve" preserveAspectRatio="none">
                         <defs>
                             <linearGradient id="curveGradient" x1="0" x2="0" y1="0" y2="1">
@@ -110,53 +105,79 @@ function Dashboard() {
                                 <stop offset="100%" stopColor="var(--accent-color)" stopOpacity="0"/>
                             </linearGradient>
                         </defs>
-                        {/* A rough Bell Curve shape: Peaks around 500-600 */}
                         <path 
                             d="M0,200 C200,200 300,50 500,20 C700,50 800,200 1000,200" 
-                            fill="url(#curveGradient)" 
-                            stroke="var(--accent-color)" 
-                            strokeWidth="2"
+                            fill="url(#curveGradient)" stroke="var(--accent-color)" strokeWidth="2"
                         />
                     </svg>
-
-                    {/* X-Axis Labels (Context) */}
                     <div className="axis-labels">
                         <span style={{left: '25%'}}>Junior</span>
                         <span style={{left: '50%'}}>Mid-Level</span>
                         <span style={{left: '75%'}}>Senior</span>
                         <span style={{left: '90%'}}>Principal</span>
                     </div>
-
-                    {/* User Marker */}
                     <div className="user-position-marker" style={{ left: `${getPosition(avgScore)}%` }}>
                         <div className="marker-line"></div>
                         <div className="marker-dot pulse"></div>
-                        <div className="marker-tooltip">
-                            You
-                        </div>
+                        <div className="marker-tooltip">You</div>
                     </div>
-
-                    {/* Context Markers (Optional: Show where companies hire) */}
-                    <div className="market-marker" style={{left: '30%'}} title="Startups / Entry">
-                        <div className="market-dot"></div>
-                    </div>
-                    <div className="market-marker" style={{left: '55%'}} title="Corporate / Mid">
-                        <div className="market-dot"></div>
-                    </div>
-                    <div className="market-marker" style={{left: '85%'}} title="Top Tech / Expert">
-                        <div className="market-dot"></div>
-                    </div>
+                    <div className="market-marker" style={{left: '30%'}} title="Startups / Entry"><div className="market-dot"></div></div>
+                    <div className="market-marker" style={{left: '55%'}} title="Corporate / Mid"><div className="market-dot"></div></div>
+                    <div className="market-marker" style={{left: '85%'}} title="Top Tech / Expert"><div className="market-dot"></div></div>
                 </div>
             </div>
         )}
       </div>
 
+      {/* --- NEW: CAREER TOOLS SECTION --- */}
+      {/* This connects to the CareerPath.jsx you just built */}
+      <div className="career-tools-section" style={{marginBottom: '3rem'}}>
+        <div className="section-header"><h2>Career Tools</h2></div>
+        <div className="tools-grid" style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem'}}>
+            
+            {/* 1. Career Navigator Card */}
+            <div className="tool-card" onClick={() => navigate('/career-path')} style={{
+                background: 'var(--navbar-bg)', border: '1px solid var(--border-color)', borderRadius: '16px', padding: '1.5rem',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1.5rem', transition: 'transform 0.2s'
+            }}>
+                <div className="tool-icon" style={{
+                    fontSize: '2rem', color: '#fff', background: 'linear-gradient(135deg, #6a11cb 0%, #2575fc 100%)',
+                    padding: '12px', borderRadius: '12px', display: 'flex'
+                }}>
+                    <IonIcon icon={compassOutline} />
+                </div>
+                <div className="tool-info">
+                    <h3 style={{margin: '0 0 0.5rem 0', color: 'var(--text-color)'}}>Career Navigator</h3>
+                    <p style={{margin: 0, color: 'var(--text-light)', fontSize: '0.9rem'}}>Set a target role (e.g. Data Scientist) and see your skill gaps.</p>
+                </div>
+                <IonIcon icon={chevronForwardOutline} style={{marginLeft: 'auto', color: 'var(--text-light)'}}/>
+            </div>
+
+            {/* 2. Full History Card (Optional alternate link) */}
+             <div className="tool-card" onClick={() => navigate('/test/history')} style={{
+                background: 'var(--navbar-bg)', border: '1px solid var(--border-color)', borderRadius: '16px', padding: '1.5rem',
+                cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1.5rem', transition: 'transform 0.2s'
+            }}>
+                <div className="tool-icon" style={{
+                    fontSize: '2rem', color: '#fff', background: 'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+                    padding: '12px', borderRadius: '12px', display: 'flex'
+                }}>
+                    <IonIcon icon={timeOutline} />
+                </div>
+                <div className="tool-info">
+                    <h3 style={{margin: '0 0 0.5rem 0', color: 'var(--text-color)'}}>Test History</h3>
+                    <p style={{margin: 0, color: 'var(--text-light)', fontSize: '0.9rem'}}>View detailed analysis for all your past assessments.</p>
+                </div>
+                <IonIcon icon={chevronForwardOutline} style={{marginLeft: 'auto', color: 'var(--text-light)'}}/>
+            </div>
+
+        </div>
+      </div>
+
       {/* --- MY SKILLS --- */}
       <div className="section-header">
         <h2>My Skills</h2>
-        <Link to="/manage-skills" className="add-skill-link">
-            <IonIcon icon={addOutline} /> Manage Skills
-        </Link>
+        <Link to="/manage-skills" className="add-skill-link"><IonIcon icon={addOutline} /> Manage Skills</Link>
       </div>
 
       {trackedSkills.length === 0 ? (
@@ -173,9 +194,7 @@ function Dashboard() {
                 <div key={skill.id} className="skill-card">
                   <div className="skill-card-content">
                     <h3 className="skill-card-name">{skill.name}</h3>
-                    <Link to={`/test/instructions/${skill.id}`} className="skill-test-button">
-                      Attempt Test
-                    </Link>
+                    <Link to={`/test/instructions/${skill.id}`} className="skill-test-button">Attempt Test</Link>
                   </div>
                 </div>
               );
@@ -188,12 +207,13 @@ function Dashboard() {
           <div className="history-section" style={{marginTop: '3rem'}}>
             <div className="section-header">
                 <h2>Recent Activity</h2>
+                {/* NEW LINK TO FULL HISTORY */}
+                <Link to="/test/history" style={{color: 'var(--accent-color)', textDecoration: 'none', fontWeight: '600', fontSize: '0.9rem'}}>
+                    View All
+                </Link>
             </div>
             <div className="history-table-wrapper" style={{
-                background: 'var(--navbar-bg)', 
-                borderRadius: '16px', 
-                border: '1px solid var(--border-color)',
-                overflow: 'hidden'
+                background: 'var(--navbar-bg)', borderRadius: '16px', border: '1px solid var(--border-color)', overflow: 'hidden'
             }}>
                 <table style={{width: '100%', borderCollapse: 'collapse'}}>
                     <thead>
@@ -206,26 +226,13 @@ function Dashboard() {
                     </thead>
                     <tbody>
                         {recentTests.map((result) => (
-                            <tr 
-                                key={result.id} 
-                                className="history-row" 
-                                onClick={() => navigate(`/test/result/${result.id}`)}
-                                style={{cursor: 'pointer', borderBottom: '1px solid var(--border-color)'}}
-                            >
-                                <td style={{padding: '1rem', color: 'var(--text-color)', fontWeight: '500'}}>
-                                    {result.skills?.name || 'Unknown'}
-                                </td>
+                            <tr key={result.id} className="history-row" onClick={() => navigate(`/test/result/${result.id}`)} style={{cursor: 'pointer', borderBottom: '1px solid var(--border-color)'}}>
+                                <td style={{padding: '1rem', color: 'var(--text-color)', fontWeight: '500'}}>{result.skills?.name || 'Unknown'}</td>
                                 <td style={{padding: '1rem'}}>
-                                    <span className={`score-badge ${getScoreClass(result.score)}`}>
-                                        {result.score}
-                                    </span>
+                                    <span className={`score-badge ${getScoreClass(result.score)}`}>{result.score}</span>
                                 </td>
-                                <td style={{padding: '1rem', color: 'var(--text-color)'}}>
-                                    {new Date(result.created_at).toLocaleDateString()}
-                                </td>
-                                <td style={{padding: '1rem', textAlign: 'right'}}>
-                                    <IonIcon icon={chevronForwardOutline} style={{color: 'var(--text-light)'}}/>
-                                </td>
+                                <td style={{padding: '1rem', color: 'var(--text-color)'}}>{new Date(result.created_at).toLocaleDateString()}</td>
+                                <td style={{padding: '1rem', textAlign: 'right'}}><IonIcon icon={chevronForwardOutline} style={{color: 'var(--text-light)'}}/></td>
                             </tr>
                         ))}
                     </tbody>
