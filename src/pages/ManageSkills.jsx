@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../supabaseClient';
 import { useAuth } from '../context/AuthContext';
 import './ManageSkills.css';
 import { IonIcon } from '@ionic/react';
-import { searchOutline, checkmarkCircle, addCircleOutline } from 'ionicons/icons';
+import { 
+  searchOutline, 
+  checkmarkCircle, 
+  addCircleOutline, 
+  closeCircleOutline // 1. Import new icon
+} from 'ionicons/icons';
 import ThemeToggle from '../components/ThemeToggle/ThemeToggle';
 
 function ManageSkills() {
@@ -13,7 +18,7 @@ function ManageSkills() {
   
   const [masterSkillList, setMasterSkillList] = useState([]);
   const [trackedSkillIds, setTrackedSkillIds] = useState(new Set());
-  const [searchTerm, setSearchTerm] = useState(''); // 1. Search State
+  const [searchTerm, setSearchTerm] = useState(''); 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -22,17 +27,15 @@ function ManageSkills() {
       if (!user) return;
       setLoading(true);
       try {
-        // Fetch ALL skills (ordered alphabetically)
         const { data: skillsData, error: skillsError } = await supabase
           .from('skills')
-          .select('id, name, job_count') // Grab the count too
-          .order('job_count', { ascending: false }) // Highest numbers first
-          .limit(1000); // Fetch top 1000 most popular skills
+          .select('id, name, job_count')
+          .order('job_count', { ascending: false })
+          .limit(1000); 
           
         if (skillsError) throw skillsError;
         setMasterSkillList(skillsData);
-        // Fetch User's Tracked Skills
-        
+
         const { data: trackedData, error: trackedError } = await supabase
           .from('user_tracked_skills')
           .select('skill_id')
@@ -49,13 +52,11 @@ function ManageSkills() {
         setLoading(false);
       }
     }
-    
     fetchSkills();
   }, [user]);
 
   const handleSkillToggle = async (skillId, isTracked) => {
     try {
-      // Optimistic Update (Update UI immediately)
       setTrackedSkillIds(prev => {
         const newSet = new Set(prev);
         if (isTracked) newSet.delete(skillId);
@@ -64,7 +65,6 @@ function ManageSkills() {
       });
 
       if (isTracked) {
-        // Untrack
         const { error } = await supabase
           .from('user_tracked_skills')
           .delete()
@@ -72,7 +72,6 @@ function ManageSkills() {
           .eq('skill_id', skillId);
         if (error) throw error;
       } else {
-        // Track
         const { error } = await supabase
           .from('user_tracked_skills')
           .insert({ user_id: user.id, skill_id: skillId });
@@ -80,14 +79,20 @@ function ManageSkills() {
       }
     } catch (err) {
       alert(`Error updating skill: ${err.message}`);
-      // Revert on error would go here
     }
   };
 
-  // 2. Filter Logic
-  const filteredSkills = masterSkillList.filter(skill => 
-    skill.name.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  const filteredSkills = masterSkillList
+    .filter(skill => 
+      skill.name.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+    .sort((a, b) => {
+      const aTracked = trackedSkillIds.has(a.id);
+      const bTracked = trackedSkillIds.has(b.id);
+      if (aTracked && !bTracked) return -1;
+      if (!aTracked && bTracked) return 1;
+      return 0;
+    });
 
   if (loading) return <div className="manage-container loading">Loading skills library...</div>;
   if (error) return <div className="manage-container error">Error: {error}</div>;
@@ -104,7 +109,6 @@ function ManageSkills() {
           <p>Search and select the skills you want to track.</p>
         </div>
 
-        {/* 3. Search Bar UI */}
         <div className="search-bar-wrapper">
             <IonIcon icon={searchOutline} className="search-icon"/>
             <input 
@@ -122,19 +126,34 @@ function ManageSkills() {
              <div className="no-results">No skills found matching "{searchTerm}"</div>
           ) : (
             <ul className="skill-list">
-              {/* Show only top 100 results to prevent lag if query is empty */}
               {filteredSkills.slice(0, 100).map(skill => {
                 const isTracked = trackedSkillIds.has(skill.id);
                 return (
                   <li key={skill.id} className={`skill-item ${isTracked ? 'tracked' : ''}`}>
                     <span className="skill-name">{skill.name}</span>
+                    
+                    {/* 2. Updated Button Logic for Hover Swap */}
                     <button
                       onClick={() => handleSkillToggle(skill.id, isTracked)}
                       className={`toggle-btn ${isTracked ? 'remove' : 'add'}`}
                     >
-                      <IonIcon icon={isTracked ? checkmarkCircle : addCircleOutline} />
-                      {isTracked ? 'Tracked' : 'Add'}
+                      {isTracked ? (
+                        <>
+                          {/* We render BOTH sets of text/icons, CSS handles visibility */}
+                          <span className="btn-content default">
+                             <IonIcon icon={checkmarkCircle} /> Tracked
+                          </span>
+                          <span className="btn-content hover">
+                             <IonIcon icon={closeCircleOutline} /> Remove
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <IonIcon icon={addCircleOutline} /> Add
+                        </>
+                      )}
                     </button>
+
                   </li>
                 );
               })}

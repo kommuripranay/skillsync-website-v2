@@ -1,0 +1,189 @@
+.job-rec-container {
+    min-height: 100vh;
+    padding: 2rem;
+    background-color: var(--background-color);
+    display: flex;
+    justify-content: center;
+}
+
+.job-rec-content {
+    width: 100%;
+    max-width: 1000px;
+}
+
+.rec-header {
+    margin-bottom: 3rem;
+    text-align: center;
+}
+.rec-header h1 { font-size: 2.5rem; color: var(--text-color); margin-bottom: 0.5rem; }
+.rec-header p { color: var(--text-light); }
+
+/* --- RADAR CHART (The Visual) --- */
+.radar-section {
+    background: var(--navbar-bg);
+    padding: 3rem 2rem 5rem 2rem; /* Extra bottom padding for labels */
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+    border: 1px solid var(--border-color);
+    margin-bottom: 3rem;
+}
+
+.radar-track-container {
+    position: relative;
+    height: 60px; /* Height for the labels to float */
+    margin-top: 2rem;
+}
+
+.radar-track {
+    position: relative;
+    height: 8px;
+    width: 100%;
+    background: #e0e0e0;
+    border-radius: 4px;
+    top: 20px;
+}
+body.theme-dark .radar-track { background: #333; }
+
+/* Grid Lines */
+.grid-line {
+    position: absolute;
+    top: -10px;
+    height: 28px;
+    border-left: 1px dashed var(--text-light);
+    opacity: 0.3;
+}
+.grid-line span {
+    position: absolute;
+    top: -25px; left: -10px;
+    font-size: 0.8rem; color: var(--text-light);
+}
+
+/* Markers */
+.radar-marker {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    transition: z-index 0.2s;
+}
+.radar-marker:hover { z-index: 10; }
+
+.marker-dot {
+    width: 16px; height: 16px;
+    border-radius: 50%;
+    border: 2px solid var(--navbar-bg);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+/* User Specifics */
+.radar-marker.user-marker { z-index: 5; }
+.marker-dot.user {
+    background: var(--accent-color);
+    width: 20px; height: 20px;
+    box-shadow: 0 0 0 4px rgba(var(--accent-color-rgb), 0.2);
+    animation: pulse 2s infinite;
+}
+.marker-label.user {
+    background: var(--accent-color);
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    margin-top: 15px; /* Push below line */
+    white-space: nowrap;
+}
+
+/* Company Specifics */
+.marker-dot.company { background: #95a5a6; }
+.marker-label.company {
+    position: absolute;
+    bottom: 25px; /* Push ABOVE line */
+    background: var(--navbar-bg);
+    border: 1px solid var(--border-color);
+    padding: 6px 10px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    text-align: center;
+    white-space: nowrap;
+    opacity: 0.8;
+    transition: opacity 0.2s;
+    display: flex; flex-direction: column;
+}
+.radar-marker:hover .marker-label.company { opacity: 1; border-color: var(--accent-color); }
+.marker-label.company span { font-size: 0.75rem; color: var(--text-light); }
+
+.radar-legend {
+    display: flex; justify-content: space-between;
+    margin-top: 1rem;
+    font-size: 0.8rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px;
+}
+
+@keyframes pulse {
+    0% { box-shadow: 0 0 0 0 rgba(var(--accent-color-rgb), 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(var(--accent-color-rgb), 0); }
+    100% { box-shadow: 0 0 0 0 rgba(var(--accent-color-rgb), 0); }
+}
+
+/* --- JOBS GRID --- */
+.job-listings h2 { font-size: 1.5rem; margin-bottom: 1.5rem; }
+
+.jobs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.job-card {
+    background: var(--navbar-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+.job-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+
+.job-score-badge {
+    position: absolute;
+    top: 1rem; right: 1rem;
+    background: rgba(0,0,0,0.05);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-weight: 700; font-size: 0.9rem; color: var(--text-light);
+}
+
+.job-details h3 { font-size: 1.1rem; margin: 0 0 0.5rem 0; padding-right: 3rem; }
+.company-name { display: flex; align-items: center; gap: 6px; color: var(--text-light); font-size: 0.9rem; margin-bottom: 1rem; }
+.seniority-tag { 
+    font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px; 
+    background: rgba(0,0,0,0.03); padding: 4px 8px; border-radius: 4px;
+}
+
+.match-indicator {
+    margin-top: 1.5rem;
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px solid var(--border-color); padding-top: 1rem;
+}
+
+/* Match Logic Colors */
+.tag-qualified { color: #27ae60; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 4px; }
+.tag-reach { color: #f39c12; font-weight: 600; font-size: 0.9rem; }
+.tag-gap { color: #e74c3c; font-weight: 600; font-size: 0.9rem; display: flex; align-items: center; gap: 4px; }
+
+.apply-btn {
+    background: transparent; border: 1px solid var(--border-color);
+    border-radius: 50%; width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    cursor: pointer; transition: all 0.2s; color: var(--text-color);
+}
+.apply-btn:hover { background: var(--accent-color); color: white; border-color: var(--accent-color); }
+
+/* Card Border Indicators */
+.job-card.match-good { border-left: 4px solid #27ae60; }
+.job-card.match-reach { border-left: 4px solid #f39c12; }
+.job-card.match-gap { border-left: 4px solid #e74c3c; opacity: 0.8; }

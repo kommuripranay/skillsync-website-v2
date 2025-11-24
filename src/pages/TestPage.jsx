@@ -14,11 +14,48 @@ import {
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../supabaseClient';
 
+// --- RICH TEXT IMPORTS ---
+import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css'; // LaTeX styles
+
 const TOTAL_TEST_TIME = 30 * 60;
 const WARNING_TIME = 5 * 60;
 const API_URL = 'http://127.0.0.1:8000';
 
-// --- COMPONENTS ---
+// --- HELPER COMPONENT: Renders Math & Code ---
+const FormattedText = ({ content }) => {
+  return (
+    <div className="markdown-content">
+      <ReactMarkdown
+        remarkPlugins={[remarkMath]}
+        rehypePlugins={[rehypeKatex]}
+        components={{
+            // Custom renderer for code blocks to look like VS Code
+            code({node, inline, className, children, ...props}) {
+                const match = /language-(\w+)/.exec(className || '')
+                return !inline ? (
+                    <div className="code-block-wrapper">
+                        <code className={className} {...props}>
+                          {children}
+                        </code>
+                    </div>
+                ) : (
+                    <code className="inline-code" {...props}>
+                      {children}
+                    </code>
+                )
+            }
+        }}
+      >
+        {content}
+      </ReactMarkdown>
+    </div>
+  );
+};
+
+// --- OVERLAY COMPONENTS ---
 
 const VisibilityWarning = ({ onResume }) => (
   <div className="warning-overlay">
@@ -68,7 +105,7 @@ const ExitConfirmationModal = ({ onConfirm, onCancel }) => (
   </div>
 );
 
-// --- MAIN PAGE ---
+// --- MAIN PAGE COMPONENT ---
 
 function TestPage() {
   const { skillName } = useParams();
@@ -94,6 +131,7 @@ function TestPage() {
   const questionStartTime = useRef(null);
 
   // 1. Fetch First Question
+  // 1. Fetch First Question (Real API Mode)
   useEffect(() => {
     const fetchFirstQuestion = async () => {
       try {
@@ -122,7 +160,7 @@ function TestPage() {
     fetchFirstQuestion();
   }, [skillNameText, user, initialLevel]);
 
-  // 2. Helpers
+  // 2. Fullscreen Helper
   const exitFullscreenMode = () => {
     if (document.fullscreenElement && document.exitFullscreen) {
       document.exitFullscreen().catch(err => console.log(err));
@@ -139,9 +177,7 @@ function TestPage() {
   };
 
   // 3. Exit Logic
-  const handleExitTest = () => {
-    setShowExitConfirm(true);
-  };
+  const handleExitTest = () => setShowExitConfirm(true);
 
   const confirmExit = () => {
     setHasStarted(false);
@@ -149,11 +185,9 @@ function TestPage() {
     navigate('/test/summary', { state: { status: 'forfeited' } });
   };
 
-  const cancelExit = () => {
-    setShowExitConfirm(false);
-  };
+  const cancelExit = () => setShowExitConfirm(false);
 
-  // 4. Submit Logic
+  // 4. Submit & API Logic
   const handleSubmit = async () => {
     if (selectedOption === null) {
       setSubmissionError("Please select an option to proceed.");
@@ -167,7 +201,8 @@ function TestPage() {
     try {
       const userId = user ? user.id : "test-user-123";
 
-      // --- CHECK IF TEST COMPLETE ---
+      // --- CHECK IF TEST IS FINISHED ---
+      // --- CHECK IF TEST IS FINISHED ---
       if (currentQuestionIndex >= 9) {
         const response = await fetch(`${API_URL}/end_test`, {
           method: 'POST',
@@ -176,27 +211,43 @@ function TestPage() {
         });
         const result = await response.json();
         
+        // Save to Supabase (UPDATED)
         if (user) {
             const finalScore = Math.round(result.final_score * 10); 
             const duration = TOTAL_TEST_TIME - timeLeft;
 
-            await supabase.from('test_results').insert({
+            const { data, error } = await supabase.from('test_results').insert({
                 user_id: user.id,
-                skill_id: skillName,
+                skill_id: skillName, // Ensure this matches your skill ID logic
                 score: finalScore,
                 base_score: finalScore,
                 fluency_bonus: 0,
-                duration_seconds: duration
-            });
+                duration_seconds: duration,
+                history: result.history // <--- NEW: SAVING THE Q&A DATA
+            }).select(); // Select to get the new ID back
+            
+            // Redirect to Summary with the DB ID (so we can fetch it if needed)
+            if (data && data[0]) {
+                 exitFullscreenMode();
+                 // We pass the full object for immediate speed, but also the ID
+                 navigate(`/test/result/${data[0].id}`, { 
+                    state: { 
+                        skill: skillNameText, 
+                        final_score: finalScore, // Adjust scale if needed based on your API
+                        questions_attempted: 10,
+                        history: result.history 
+                    } 
+                 });
+                 return;
+            }
         }
-
-        // Success! Exit and Redirect to Summary
+        
         exitFullscreenMode();
-        navigate('/test/summary', { state: { status: 'completed' } });
+        navigate('/dashboard'); // Fallback
         return;
       }
 
-      // --- NEXT QUESTION ---
+      // --- GET NEXT QUESTION ---
       const response = await fetch(`${API_URL}/next_question`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -225,6 +276,7 @@ function TestPage() {
     }
   };
 
+  // 5. Selection & Resume Logic
   const handleOptionSelect = (optionId) => {
     setSelectedOption(optionId);
     setSubmissionError(null);
@@ -236,17 +288,16 @@ function TestPage() {
     const element = document.documentElement;
     if (element.requestFullscreen) element.requestFullscreen().catch(() => {});
   };
+  
   const formatTime = (s) => `${Math.floor(s / 60)}:${(s % 60).toString().padStart(2, '0')}`;
 
-  // 5. Timer & Focus Effects
+  // 6. Security & Timer Effects
   useEffect(() => {
     if (!hasStarted) return;
-
     const handleBlur = () => setShowWarning(true);
     const handleFullscreenChange = () => {
       if (!document.fullscreenElement) setShowWarning(true);
     };
-
     const timer = setInterval(() => {
       if (showWarning) return;
       setTimeLeft((prev) => {
@@ -258,10 +309,8 @@ function TestPage() {
         return prev - 1;
       });
     }, 1000);
-
     window.addEventListener('blur', handleBlur);
     document.addEventListener('fullscreenchange', handleFullscreenChange);
-
     return () => {
       window.removeEventListener('blur', handleBlur);
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
@@ -290,6 +339,7 @@ function TestPage() {
 
       <div className="test-box" style={{ filter: (showWarning || !hasStarted || showExitConfirm) ? 'blur(5px)' : 'none' }}>
         
+        {/* HEADER: Progress & Timer */}
         <div className="test-header">
           <div className="progress-info">
             <span className="progress-text">Question {currentQuestionIndex + 1} of 10</span>
@@ -303,18 +353,27 @@ function TestPage() {
           </div>
         </div>
 
+        {/* BODY: Question & Options */}
         <div className="question-body">
-          <h2 className="question-text">{currentQuestion.question_title}</h2>
+          <div className="question-text">
+            {/* Rich Text for Question */}
+            <FormattedText content={currentQuestion.question_title} />
+          </div>
+
           <ul className="options-list">
             {optionsArray.map((option) => (
               <li key={option.id} className={`option-item ${selectedOption === option.id ? 'selected' : ''}`} onClick={() => handleOptionSelect(option.id)}>
                 <span className="radio-button">{selectedOption === option.id && <span className="radio-button-inner"></span>}</span>
-                <span className="option-text">{option.text}</span>
+                <div className="option-text">
+                    {/* Rich Text for Options */}
+                    <FormattedText content={option.text} />
+                </div>
               </li>
             ))}
           </ul>
         </div>
 
+        {/* FOOTER: Controls */}
         <div className="test-footer">
           {submissionError && (
              <div className="submission-error">

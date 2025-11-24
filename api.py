@@ -2,161 +2,220 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 from dotenv import load_dotenv
 import os
-# --- 1. IMPORT CORS MIDDLEWARE ---
+import json
+import re
+import random
+
 from fastapi.middleware.cors import CORSMiddleware
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain_core.prompts import ChatPromptTemplate
-import json
-import re
+from supabase import create_client, Client
 
-# -----------------------------
-# Load environment variables
-# -----------------------------
+# --- SETUP ---
 load_dotenv()
 google_api_key = os.getenv("GOOGLE_API_KEY")
-if not google_api_key:
-    raise ValueError("Set GOOGLE_API_KEY in .env")
+supabase_url = os.getenv("SUPABASE_URL")
+supabase_key = os.getenv("SUPABASE_KEY")
 
-# -----------------------------
-# Initialize FastAPI app
-# -----------------------------
+if not google_api_key or not supabase_url or not supabase_key:
+    raise ValueError("Missing API Keys in .env")
+
 app = FastAPI(title="Adaptive Skill Evaluation API")
 
-# -----------------------------
-# 2. ADD CORS MIDDLEWARE CONFIGURATION
-# -----------------------------
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allows all origins (like localhost:5173)
+    allow_origins=["*"],
     allow_credentials=True,
-    allow_methods=["*"],  # Allows all methods (POST, GET, etc.)
-    allow_headers=["*"],  # Allows all headers
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
-# -----------------------------
-# Initialize Gemini LLM
-# -----------------------------
 llm = ChatGoogleGenerativeAI(
     api_key=google_api_key,
     model="gemini-2.0-flash",
-    temperature=0.7
+    temperature=0.8 
 )
 
-# -----------------------------
-# Models for requests
-# -----------------------------
+supabase: Client = create_client(supabase_url, supabase_key)
+
+# --- MODELS ---
 class StartTestRequest(BaseModel):
     user_id: str
     skill: str
-    self_rating: int  # between 0–100
+    self_rating: int 
 
 class AnswerRequest(BaseModel):
     user_id: str
-    question_id: int
+    question_id: int 
     selected_option: str
-    time_taken: float  # seconds
-    previous_level: int  # 0–100
+    time_taken: float 
+    previous_level: float
     correct_answer: str
 
 class EndTestRequest(BaseModel):
     user_id: str
     skill: str
 
-# -----------------------------
-# Prompt Template
-# -----------------------------
-question_prompt = ChatPromptTemplate.from_template("""
-You are an expert technical test designer for adaptive skill assessments.
+class ExplainRequest(BaseModel):
+    question_title: str
+    user_answer: str
+    correct_answer: str
+    correct_option_text: str
+    user_option_text: str
 
-The user is being tested for the skill: **{skill}**
-They believe their level is **{level}/100**
+# --- SESSION STORE ---
+active_sessions = {}
 
-Difficulty buckets:
-- 0 - 20: very basic and conceptual
-- 20 - 40: beginner
-- 40 - 60: intermediate
-- 60 - 80: advanced
-- 80 - 100: expert
-
-Instructions:
-- Generate ONE multiple choice question.
-- Avoid repeating any question from previous history.
-- Use the difficulty bucket nearest to the user's current estimated skill level.
-- Each question must be relevant to real-world application of the skill.
-- Include 4 options, with only one correct answer.
-- Use neutral, professional wording.
-
-Additional Context:
-- Previous questions and user responses: {history}
-
-Return only valid JSON (no markdown) in the structure:
-
-{{
-"question_id": {qid},
-"question_title": "string",
-"options": {{
-    "opt1": "string",
-    "opt2": "string",
-    "opt3": "string",
-    "opt4": "string"
-}},
-"correct_answer": "optX",
-"difficulty": {level}
-}}
-""")
-
-# -----------------------------
-# Helper function to clean LLM JSON
-# -----------------------------
+# --- HELPERS ---
 def clean_llm_json(llm_text: str) -> str:
     llm_text = re.sub(r'^```json\s*', '', llm_text.strip(), flags=re.MULTILINE)
     llm_text = re.sub(r'```$', '', llm_text.strip(), flags=re.MULTILINE)
     return llm_text
 
-# -----------------------------
-# In-memory store (prototype)
-# -----------------------------
-active_sessions = {}
+def normalize_difficulty(level: float) -> int:
+    lvl = int(level)
+    if lvl <= 20: return 20
+    if lvl <= 40: return 40
+    if lvl <= 60: return 60
+    if lvl <= 80: return 80
+    return 100
 
-# -----------------------------
-# API Endpoints
-# -----------------------------
+async def get_or_create_question(skill: str, raw_level: float, history: list):
+    difficulty_bucket = normalize_difficulty(raw_level)
+    
+    seen_ids = set()
+    if history:
+        for item in history:
+            if "question_id" in item:
+                seen_ids.add(str(item["question_id"]))
+
+    try:
+        # DB CHECK
+        response = supabase.table('question_bank')\
+            .select('question_data')\
+            .eq('skill_name', skill)\
+            .eq('difficulty_level', difficulty_bucket)\
+            .execute()
+        
+        existing_questions = [r['question_data'] for r in response.data]
+        existing_titles = [q.get('question_title', '')[:100] for q in existing_questions]
+        
+        # PATH A: FETCH FROM DB (If deep enough)
+        if len(existing_questions) >= 15: 
+            candidates = []
+            for q_data in existing_questions:
+                q_id = str(q_data.get('question_id'))
+                if q_id not in seen_ids:
+                    candidates.append(q_data)
+            
+            if candidates:
+                return random.choice(candidates)
+
+        # PATH B: GENERATE NEW
+        print(f"DEBUG: Generating FRESH question (Level {difficulty_bucket})...")
+
+        for attempt in range(2):
+            question_types = [
+                "Conceptual Understanding",
+                "Code Output Prediction",
+                "Debugging",
+                "Real-world Application",
+                "Best Practices"
+            ]
+            selected_type = random.choice(question_types)
+            
+            negative_constraint = ""
+            if existing_titles:
+                sample = random.sample(existing_titles, min(3, len(existing_titles)))
+                negative_constraint = f"DO NOT generate questions similar to: {json.dumps(sample)}"
+
+            prompt = ChatPromptTemplate.from_template("""
+            You are an expert technical interviewer.
+            Target Skill: **{skill}**
+            Target Level: **{level}/100**
+            Question Style: **{q_type}**
+            
+            Instructions:
+            1. Generate ONE multiple choice question.
+            2. {exclusions}
+            3. MANDATORY: If code is involved, wrap it in markdown code blocks inside 'question_title'.
+            4. **Include a short 'explanation' field** (max 2 sentences) describing why the correct answer is right.
+            5. Return ONLY JSON.
+
+            JSON Structure:
+            {{
+                "question_id": {qid}, 
+                "question_title": "Question... \\n\\n ```lang\\n code \\n```",
+                "options": {{ "opt1": "...", "opt2": "...", "opt3": "...", "opt4": "..." }},
+                "correct_answer": "optX",
+                "explanation": "Brief explanation of why optX is correct.",
+                "difficulty": {level}
+            }}
+            """)
+
+            temp_qid = random.randint(100000, 999999) 
+            
+            formatted_prompt = prompt.format_messages(
+                skill=skill,
+                level=difficulty_bucket,
+                q_type=selected_type,
+                exclusions=negative_constraint,
+                qid=temp_qid
+            )
+            
+            ai_response = llm.invoke(formatted_prompt)
+            cleaned_json = clean_llm_json(ai_response.content)
+            question_data = json.loads(cleaned_json)
+            question_data["difficulty"] = difficulty_bucket
+
+            # Check Duplicates
+            is_duplicate = False
+            new_title_clean = question_data['question_title'].replace(' ', '').lower()
+            for existing in existing_questions:
+                existing_title_clean = existing.get('question_title', '').replace(' ', '').lower()
+                if new_title_clean in existing_title_clean:
+                    is_duplicate = True
+                    break
+            
+            if not is_duplicate:
+                try:
+                    supabase.table('question_bank').insert({
+                        "skill_name": skill,
+                        "difficulty_level": difficulty_bucket,
+                        "question_data": question_data
+                    }).execute()
+                except Exception:
+                    pass
+                return question_data
+            
+        return question_data # Fallback
+
+    except Exception as e:
+        print(f"ERROR: {str(e)}")
+        raise e
+
+# --- ENDPOINTS ---
+
 @app.post("/start_test")
 async def start_test(req: StartTestRequest):
-    """
-    Start a new adaptive test session for a user & skill.
-    Generates the first question.
-    """
     user_session = {
         "user_id": req.user_id,
         "skill": req.skill,
-        "current_level": req.self_rating,
+        "current_level": float(req.self_rating), 
         "questions_asked": 0,
         "correct_answers": 0,
-        "history": []  # stores question, options, correct_answer, user_answer
+        "history": [] 
     }
-
     active_sessions[req.user_id] = user_session
 
-    # Generate first question
     try:
-        history_json = json.dumps(user_session["history"])
-        prompt = question_prompt.format_messages(
-            skill=req.skill,
-            level=req.self_rating,
-            qid=1,
-            history=history_json
-        )
-        response = llm.invoke(prompt)
-        cleaned_response = clean_llm_json(response.content)
-        question = json.loads(cleaned_response)
-
-        # Store question in session history
+        question = await get_or_create_question(req.skill, req.self_rating, [])
         user_session["history"].append({
             "question_id": question["question_id"],
             "question_title": question["question_title"],
             "options": question["options"],
             "correct_answer": question["correct_answer"],
+            "explanation": question.get("explanation", "No explanation available."), # Save explanation
             "user_answer": None,
             "difficulty": question["difficulty"]
         })
@@ -164,58 +223,41 @@ async def start_test(req: StartTestRequest):
         user_session["questions_asked"] += 1
         return question
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to generate question: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Start failed: {str(e)}")
 
 
 @app.post("/next_question")
 async def next_question(req: AnswerRequest):
-    """
-    Generate next question based on user response and history.
-    """
     session = active_sessions.get(req.user_id)
     if not session:
-        raise HTTPException(status_code=404, detail="No active test session found.")
+        raise HTTPException(status_code=404, detail="No active test found.")
 
-    # Update user's answer in history
-    if session["last_question"]["question_id"] != req.question_id:
-        raise HTTPException(status_code=400, detail="Question ID mismatch.")
-    
     for q in session["history"]:
-        if q["question_id"] == req.question_id:
+        if str(q["question_id"]) == str(req.question_id):
             q["user_answer"] = req.selected_option
             break
 
-    # Adjust skill level based on correctness and time
-    level = session["current_level"]
-    time_factor = max(0.5, min(1.5, 30 / (req.time_taken + 1)))  # ideal 30s
+    level = float(session["current_level"])
+    time_factor = max(0.5, min(1.5, 30 / (req.time_taken + 1)))
 
     if req.selected_option == req.correct_answer:
-        new_level = min(100, int(level + (5 * time_factor)))
+        increase = 10.0 * time_factor
+        new_level = min(100.0, level + increase)
         session["correct_answers"] += 1
     else:
-        new_level = max(0, int(level - (5 / time_factor)))
+        decrease = 5.0 / time_factor
+        new_level = max(0.0, level - decrease)
 
     session["current_level"] = new_level
 
-    # Generate next question
     try:
-        history_json = json.dumps(session["history"])
-        prompt = question_prompt.format_messages(
-            skill=session["skill"],
-            level=new_level,
-            qid=session["questions_asked"] + 1,
-            history=history_json
-        )
-        response = llm.invoke(prompt)
-        cleaned_response = clean_llm_json(response.content)
-        question = json.loads(cleaned_response)
-
-        # Store question in session history
+        question = await get_or_create_question(session["skill"], new_level, session["history"])
         session["history"].append({
             "question_id": question["question_id"],
             "question_title": question["question_title"],
             "options": question["options"],
             "correct_answer": question["correct_answer"],
+            "explanation": question.get("explanation", "No explanation available."), # Save explanation
             "user_answer": None,
             "difficulty": question["difficulty"]
         })
@@ -223,25 +265,50 @@ async def next_question(req: AnswerRequest):
         session["questions_asked"] += 1
         return question
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to generate next question: {str(e)}")
-
+        raise HTTPException(status_code=500, detail=f"Next question failed: {str(e)}")
 
 @app.post("/end_test")
 async def end_test(req: EndTestRequest):
-    """
-    Ends the test and returns final score.
-    """
     session = active_sessions.pop(req.user_id, None)
     if not session:
-        raise HTTPException(status_code=404, detail="No active test found for user.")
-
-    # Compute score
-    score = (session["correct_answers"] / max(1, session["questions_asked"])) * 100
+        raise HTTPException(status_code=404, detail="No active test found.")
+    
+    accuracy = (session["correct_answers"] / max(1, session["questions_asked"])) * 50
+    difficulty_bonus = (session["current_level"] / 100) * 50
+    final_score = min(100.0, accuracy + difficulty_bonus)
 
     return {
         "user_id": req.user_id,
         "skill": req.skill,
-        "final_score": round(score, 2),
+        "final_score": final_score,
         "questions_attempted": session["questions_asked"],
         "history": session["history"]
     }
+
+# --- NEW: ON-DEMAND EXPLANATION ---
+@app.post("/explain_mistake")
+async def explain_mistake(req: ExplainRequest):
+    """
+    Generates a personalized explanation for why the user was wrong.
+    """
+    prompt = ChatPromptTemplate.from_template("""
+    The user answered a technical interview question incorrectly.
+    
+    Question: {question}
+    
+    Correct Answer: {correct_text}
+    User's Wrong Answer: {user_text}
+    
+    Task:
+    Explain VERY BRIEFLY (max 2 sentences) why the user's answer is wrong and why the correct answer is the right choice.
+    Be encouraging but precise.
+    """)
+    
+    formatted_prompt = prompt.format_messages(
+        question=req.question_title,
+        correct_text=req.correct_option_text,
+        user_text=req.user_option_text
+    )
+    
+    response = llm.invoke(formatted_prompt)
+    return {"explanation": response.content}

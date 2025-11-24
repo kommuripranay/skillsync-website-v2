@@ -19,6 +19,7 @@ import TestPage from './pages/TestPage';
 import TestTerminated from './pages/TestTerminated';
 import TestHistory from './pages/TestHistory'; // Imported here
 import TestSummary from './pages/TestSummary'; // Import the new page
+import JobRecommendations from './pages/JobRecommendations';
 
 function App() {
   return (
@@ -49,6 +50,8 @@ function App() {
 
       <Route path="*" element={<Navigate to="/" replace />} />
       <Route path="/test/summary" element={<TestSummary />} />
+      <Route path="/test/result/:resultId" element={<TestSummary />} />
+      <Route path="/jobs/recommendations" element={<JobRecommendations />} />
     </Routes>
   );
 }

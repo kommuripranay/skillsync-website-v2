@@ -1,24 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 import { supabase } from '../supabaseClient';
 import { useAuth } from '../context/AuthContext';
 import { IonIcon } from '@ionic/react';
 import { 
-  trendingUpOutline, 
-  ribbonOutline, 
   addOutline, 
-  barChartOutline,
-  arrowForwardOutline 
+  arrowForwardOutline,
+  chevronForwardOutline,
+  briefcaseOutline,
+  ribbonOutline
 } from 'ionicons/icons';
 
 function Dashboard() {
   const { user } = useAuth();
+  const navigate = useNavigate();
   
   const [trackedSkills, setTrackedSkills] = useState([]);
   const [recentTests, setRecentTests] = useState([]);
-  const [chartData, setChartData] = useState([]);
-  const [stats, setStats] = useState({ totalTests: 0, avgScore: 0 });
+  const [avgScore, setAvgScore] = useState(0);
+  const [totalTests, setTotalTests] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -38,111 +39,119 @@ function Dashboard() {
         // 2. Fetch Test Results
         const { data: testData } = await supabase
             .from('test_results')
-            .select('score, created_at, skills(name)')
+            .select('id, score, created_at, skills(name)')
             .eq('user_id', user.id)
-            .order('created_at', { ascending: false }); // Newest first
+            .order('created_at', { ascending: false }); 
 
         if (testData && testData.length > 0) {
-            const total = testData.length;
-            const avg = testData.reduce((acc, curr) => acc + curr.score, 0) / total;
+            setRecentTests(testData.slice(0, 5));
+            setTotalTests(testData.length);
             
-            setStats({
-                totalTests: total,
-                avgScore: Math.round(avg)
-            });
-            
-            setRecentTests(testData.slice(0, 3)); // Top 3 for list
-
-            // Prepare Chart Data (Take last 7, reverse to show chronological left-to-right)
-            const dataForChart = testData.slice(0, 7).reverse();
-            setChartData(dataForChart);
+            // Calculate Average Score
+            const avg = testData.reduce((acc, curr) => acc + curr.score, 0) / testData.length;
+            setAvgScore(Math.round(avg));
         }
 
       } catch (error) {
-        console.error('Error:', error.message);
+        console.error('Error loading dashboard:', error.message);
       } finally {
         setLoading(false);
       }
     }
-
     loadDashboardData();
   }, [user]);
 
-  if (loading) return <div className="dashboard-container">Loading...</div>;
+  const getScoreClass = (score) => {
+      if (score >= 800) return 'score-high';
+      if (score >= 600) return 'score-mid';
+      return 'score-low';
+  };
+
+  // Helper to calculate left position % based on score (0-1000)
+  const getPosition = (score) => Math.min(100, Math.max(0, (score / 1000) * 100));
+
+  if (loading) return <div className="dashboard-container" style={{paddingTop:'4rem', textAlign:'center'}}>Loading Dashboard...</div>;
 
   return (
     <div className="dashboard-container">
       <div className="dashboard-header">
-        <h1>Welcome back</h1>
-        <p>Track your growth and assess your technical skills.</p>
+        <h1>Overview</h1>
+        <p>Your market value based on {totalTests} assessments.</p>
       </div>
 
-      {/* --- ANALYTICS SECTION --- */}
-      <div className="analytics-section">
-        {stats.totalTests === 0 ? (
-            // STATE A: No Analytics Yet
-            <div className="no-analytics-hero">
-                <div className="hero-icon">
-                    <IonIcon icon={barChartOutline} />
-                </div>
-                <h2>No Analytics to Show Yet</h2>
-                <p>Take your first skill assessment to unlock performance insights and score tracking.</p>
-                {trackedSkills.length > 0 ? (
-                    <Link to={`/test/instructions/${trackedSkills[0].skills.id}`} className="hero-cta">
-                        Take a Test <IonIcon icon={arrowForwardOutline} />
-                    </Link>
-                ) : (
-                    <Link to="/manage-skills" className="hero-cta">
-                        Add a Skill First <IonIcon icon={arrowForwardOutline} />
-                    </Link>
-                )}
+      {/* --- NEW: MARKET DENSITY CHART (Replaces Bar Graph) --- */}
+      <div className="market-density-section">
+        {totalTests === 0 ? (
+            <div className="empty-density-state">
+                <IonIcon icon={briefcaseOutline} className="empty-icon"/>
+                <h3>Where do you stand?</h3>
+                <p>Take your first test to see your position in the global talent pool.</p>
+                <Link to="/manage-skills" className="hero-cta">Start Assessment <IonIcon icon={arrowForwardOutline}/></Link>
             </div>
         ) : (
-            // STATE B: Show Graph & Stats
-            <div className="analytics-grid">
-                {/* Left: The Graph */}
-                <div className="chart-container">
-                    <h3>Score Performance</h3>
-                    <div className="simple-bar-chart">
-                        {chartData.map((item, index) => (
-                            <div key={index} className="bar-group">
-                                <div 
-                                    className="bar" 
-                                    style={{ height: `${(item.score / 1000) * 100}%` }}
-                                    title={`Score: ${item.score} - ${item.skills?.name}`}
-                                >
-                                    <span className="bar-tooltip">{item.score}</span>
-                                </div>
-                                <span className="bar-label">
-                                    {new Date(item.created_at).toLocaleDateString(undefined, {month:'short', day:'numeric'})}
-                                </span>
-                            </div>
-                        ))}
+            <div className="density-chart-container">
+                <div className="density-header">
+                    <div className="density-title">
+                        <h3>Industry Standing</h3>
+                        <p>Score vs. Hiring Demand Density</p>
+                    </div>
+                    <div className="current-score-badge">
+                        <span className="label">Your Avg</span>
+                        <span className="value">{avgScore}</span>
                     </div>
                 </div>
 
-                {/* Right: The Stat Cards */}
-                <div className="stats-column">
-                    <div className="stat-card">
-                        <div className="stat-icon"><IonIcon icon={ribbonOutline} /></div>
-                        <div className="stat-info">
-                            <h3>{stats.totalTests}</h3>
-                            <span>Tests Taken</span>
+                <div className="chart-wrapper">
+                    {/* The Bell Curve SVG (CSS Graphic) */}
+                    <svg viewBox="0 0 1000 200" className="density-curve" preserveAspectRatio="none">
+                        <defs>
+                            <linearGradient id="curveGradient" x1="0" x2="0" y1="0" y2="1">
+                                <stop offset="0%" stopColor="var(--accent-color)" stopOpacity="0.4"/>
+                                <stop offset="100%" stopColor="var(--accent-color)" stopOpacity="0"/>
+                            </linearGradient>
+                        </defs>
+                        {/* A rough Bell Curve shape: Peaks around 500-600 */}
+                        <path 
+                            d="M0,200 C200,200 300,50 500,20 C700,50 800,200 1000,200" 
+                            fill="url(#curveGradient)" 
+                            stroke="var(--accent-color)" 
+                            strokeWidth="2"
+                        />
+                    </svg>
+
+                    {/* X-Axis Labels (Context) */}
+                    <div className="axis-labels">
+                        <span style={{left: '25%'}}>Junior</span>
+                        <span style={{left: '50%'}}>Mid-Level</span>
+                        <span style={{left: '75%'}}>Senior</span>
+                        <span style={{left: '90%'}}>Principal</span>
+                    </div>
+
+                    {/* User Marker */}
+                    <div className="user-position-marker" style={{ left: `${getPosition(avgScore)}%` }}>
+                        <div className="marker-line"></div>
+                        <div className="marker-dot pulse"></div>
+                        <div className="marker-tooltip">
+                            You
                         </div>
                     </div>
-                    <div className="stat-card">
-                        <div className="stat-icon"><IonIcon icon={trendingUpOutline} /></div>
-                        <div className="stat-info">
-                            <h3>{stats.avgScore}</h3>
-                            <span>Avg Score</span>
-                        </div>
+
+                    {/* Context Markers (Optional: Show where companies hire) */}
+                    <div className="market-marker" style={{left: '30%'}} title="Startups / Entry">
+                        <div className="market-dot"></div>
+                    </div>
+                    <div className="market-marker" style={{left: '55%'}} title="Corporate / Mid">
+                        <div className="market-dot"></div>
+                    </div>
+                    <div className="market-marker" style={{left: '85%'}} title="Top Tech / Expert">
+                        <div className="market-dot"></div>
                     </div>
                 </div>
             </div>
         )}
       </div>
 
-      {/* --- MY SKILLS SECTION --- */}
+      {/* --- MY SKILLS --- */}
       <div className="section-header">
         <h2>My Skills</h2>
         <Link to="/manage-skills" className="add-skill-link">
@@ -160,15 +169,11 @@ function Dashboard() {
             {trackedSkills.map((item) => {
               const skill = item.skills;
               if (!skill) return null;
-              
               return (
                 <div key={skill.id} className="skill-card">
                   <div className="skill-card-content">
                     <h3 className="skill-card-name">{skill.name}</h3>
-                    <Link
-                      to={`/test/instructions/${skill.id}`} 
-                      className="skill-test-button"
-                    >
+                    <Link to={`/test/instructions/${skill.id}`} className="skill-test-button">
                       Attempt Test
                     </Link>
                   </div>
@@ -176,6 +181,57 @@ function Dashboard() {
               );
             })}
         </div>
+      )}
+
+      {/* --- RECENT ACTIVITY --- */}
+      {totalTests > 0 && (
+          <div className="history-section" style={{marginTop: '3rem'}}>
+            <div className="section-header">
+                <h2>Recent Activity</h2>
+            </div>
+            <div className="history-table-wrapper" style={{
+                background: 'var(--navbar-bg)', 
+                borderRadius: '16px', 
+                border: '1px solid var(--border-color)',
+                overflow: 'hidden'
+            }}>
+                <table style={{width: '100%', borderCollapse: 'collapse'}}>
+                    <thead>
+                        <tr style={{textAlign: 'left', background: 'rgba(0,0,0,0.02)'}}>
+                            <th style={{padding: '1rem', borderBottom: '1px solid var(--border-color)', color: 'var(--text-light)', fontSize: '0.85rem'}}>Skill</th>
+                            <th style={{padding: '1rem', borderBottom: '1px solid var(--border-color)', color: 'var(--text-light)', fontSize: '0.85rem'}}>Score</th>
+                            <th style={{padding: '1rem', borderBottom: '1px solid var(--border-color)', color: 'var(--text-light)', fontSize: '0.85rem'}}>Date</th>
+                            <th style={{padding: '1rem', borderBottom: '1px solid var(--border-color)'}}></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {recentTests.map((result) => (
+                            <tr 
+                                key={result.id} 
+                                className="history-row" 
+                                onClick={() => navigate(`/test/result/${result.id}`)}
+                                style={{cursor: 'pointer', borderBottom: '1px solid var(--border-color)'}}
+                            >
+                                <td style={{padding: '1rem', color: 'var(--text-color)', fontWeight: '500'}}>
+                                    {result.skills?.name || 'Unknown'}
+                                </td>
+                                <td style={{padding: '1rem'}}>
+                                    <span className={`score-badge ${getScoreClass(result.score)}`}>
+                                        {result.score}
+                                    </span>
+                                </td>
+                                <td style={{padding: '1rem', color: 'var(--text-color)'}}>
+                                    {new Date(result.created_at).toLocaleDateString()}
+                                </td>
+                                <td style={{padding: '1rem', textAlign: 'right'}}>
+                                    <IonIcon icon={chevronForwardOutline} style={{color: 'var(--text-light)'}}/>
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+          </div>
       )}
     </div>
   );

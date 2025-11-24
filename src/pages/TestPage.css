@@ -448,3 +448,51 @@ body.theme-dark .exit-test-button:hover {
 .submit-button:hover {
   background-color: var(--accent-hover);
 }
+
+/* --- Markdown & Rich Text Styling --- */
+
+/* Text flow */
+.markdown-content p {
+  margin: 0;
+  line-height: 1.6;
+  display: inline-block; /* Helps with option alignment */
+}
+
+/* Code Blocks (e.g., Python code) */
+.markdown-content .code-block-wrapper {
+  background-color: #1e1e1e; /* VS Code Dark Grey */
+  color: #d4d4d4;           /* Light Grey Text */
+  padding: 1rem;
+  border-radius: 8px;
+  overflow-x: auto;         /* Scrolls if line is too long */
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 0.9rem;
+  margin: 1rem 0;
+  border: 1px solid #333;
+}
+
+/* Inline Code (e.g., `variable_name`) */
+.markdown-content .inline-code {
+  background-color: rgba(0,0,0,0.06);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: 'Consolas', monospace;
+  font-size: 0.9em;
+  color: var(--accent-color);
+  font-weight: 500;
+}
+
+/* Dark Mode Overrides for Code */
+body.theme-dark .markdown-content .inline-code {
+  background-color: rgba(255,255,255,0.1);
+  color: #ffb4ab;
+}
+
+/* Fix option alignment when math/code is present */
+.option-text {
+  flex: 1;
+  /* Prevent clicks on internal elements from breaking selection logic */
+  pointer-events: none; 
+}
+/* Re-enable pointer events for the wrapper to ensure text is selectable if needed, 
+   but usually we want the whole LI to take the click. The LI has the onClick. */

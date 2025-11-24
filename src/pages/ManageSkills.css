@@ -160,3 +160,100 @@ body.theme-dark .toggle-btn.remove {
     background-color: #0f391b;
     color: #8ab494;
 }
+
+/* ... keep existing styles ... */
+
+/* Buttons */
+.toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 600;
+    transition: all 0.3s ease; /* Smooth transition for colors */
+    min-width: 90px;
+    position: relative;
+    overflow: hidden; /* Crucial: cuts off the text sliding in/out */
+}
+
+/* -- Add Button -- */
+.toggle-btn.add {
+    background-color: transparent;
+    color: var(--text-light);
+}
+.toggle-btn.add:hover {
+    background-color: var(--accent-color);
+    color: white;
+    border-color: var(--accent-color);
+}
+
+/* -- Remove (Tracked) Button Logic -- */
+.toggle-btn.remove {
+    background-color: #e6f4ea; /* Light Green */
+    color: #137333;           /* Dark Green */
+    border-color: transparent;
+}
+
+/* Common style for the internal spans */
+.btn-content {
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Center text within the container */
+    gap: 5px;
+    transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.2s;
+    width: 100%;
+    height: 100%;
+}
+
+/* -- ANIMATION LOGIC -- */
+
+/* 1. The Default Text (Tracked) */
+/* Stays in the flow naturally */
+.toggle-btn.remove .btn-content.default {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+/* 2. The Hover Text (Remove) */
+/* Absolutely positioned so it sits on top/outside, ready to slide in */
+.toggle-btn.remove .btn-content.hover {
+    position: absolute;
+    inset: 0; /* Fills the button space */
+    transform: translateX(100%); /* Start completely off to the right */
+    opacity: 0;
+}
+
+/* -- HOVER STATES -- */
+
+.toggle-btn.remove:hover {
+    background-color: #fce8e6; /* Light Red */
+    color: #c5221f;           /* Dark Red */
+}
+
+/* Slide "Tracked" out to the Left */
+.toggle-btn.remove:hover .btn-content.default {
+    transform: translateX(-100%);
+    opacity: 0;
+}
+
+/* Slide "Remove" in from the Right */
+.toggle-btn.remove:hover .btn-content.hover {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+/* Dark Mode Tweaks */
+body.theme-dark .toggle-btn.remove {
+    background-color: #0f391b;
+    color: #8ab494;
+}
+
+body.theme-dark .toggle-btn.remove:hover {
+    background-color: #3e1214;
+    color: #ffb4ab;
+}
