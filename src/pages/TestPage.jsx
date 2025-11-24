@@ -13,7 +13,8 @@ import {
 } from 'ionicons/icons';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../supabaseClient';
-import API_URL from '../config';
+
+const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
 // --- RICH TEXT IMPORTS ---
 import ReactMarkdown from 'react-markdown';

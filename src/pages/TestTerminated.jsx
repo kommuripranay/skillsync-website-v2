@@ -20,7 +20,8 @@ import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
-import API_URL from '../config';
+
+const API_URL = import.meta.env.VITE_API_URL || "http://127.0.0.1:8000";
 
 // Reuse the FormattedText component
 const FormattedText = ({ content }) => (
