@@ -24,7 +24,7 @@ app = FastAPI(title="Adaptive Skill Evaluation API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["*"], # In production, replace "*" with your Vercel URL later
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

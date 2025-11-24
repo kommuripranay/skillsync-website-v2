@@ -13,6 +13,7 @@ import {
 } from 'ionicons/icons';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../supabaseClient';
+import API_URL from '../config';
 
 // --- RICH TEXT IMPORTS ---
 import ReactMarkdown from 'react-markdown';
@@ -22,7 +23,6 @@ import 'katex/dist/katex.min.css'; // LaTeX styles
 
 const TOTAL_TEST_TIME = 30 * 60;
 const WARNING_TIME = 5 * 60;
-const API_URL = 'http://127.0.0.1:8000';
 
 // --- HELPER COMPONENT: Renders Math & Code ---
 const FormattedText = ({ content }) => {

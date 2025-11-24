@@ -20,6 +20,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import 'katex/dist/katex.min.css';
+import API_URL from '../config';
 
 // Reuse the FormattedText component
 const FormattedText = ({ content }) => (
@@ -105,7 +106,7 @@ function TestSummary() {
     const handleExplainMistake = async (qItem) => {
         setExplainingId(qItem.question_id);
         try {
-            const response = await fetch('http://127.0.0.1:8000/explain_mistake', {
+            const response = await fetch(`${API_URL}+/explain_mistake`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
